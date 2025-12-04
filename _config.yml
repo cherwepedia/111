@@ -1,0 +1,41 @@
+title: "Червепедия"
+description: "Энциклопедия черветреда"
+
+# ВАЖНО: Измените эти значения на свои!
+# baseurl - название вашего репозитория (например, /chervepedia)
+# url - ваш GitHub Pages домен
+baseurl: "/"
+url: "https://cherwepedia.github.io"
+
+# Jekyll настройки
+markdown: kramdown
+permalink: /:categories/:title/
+
+# Плагины для GitHub Pages
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Категории
+categories:
+  - name: "Люди"
+    slug: "люди"
+  - name: "Черветред"
+    slug: "черветред"
+  - name: "Другое"
+    slug: "другое"
+  - name: "Истоки"
+    slug: "истоки"
+
+# Исключения
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+
+# Настройки
+kramdown:
+  input: GFM
+  syntax_highlighter_opts:
+    disable: true

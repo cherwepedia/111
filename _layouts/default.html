@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+  <!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105469789', 'ym');
+
+    ym(105469789, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/105469789" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} — {{ site.title }}</title>
+  <meta name="description" content="{{ site.description }}">
+
+  <!-- CSS из CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+
+  <!-- Font из CDN -->
+  <link href="https://fonts.googleapis.com/css2?family=Linux+Libertine&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Мобильное меню overlay -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
+
+  <!-- Верхняя шапка (только мобильная) -->
+  <div class="mobile-header">
+    <button class="menu-toggle" onclick="toggleMobileMenu()">☰</button>
+    <div class="mobile-search">
+      <input type="text" id="mobileSearchInput" placeholder="Поиск статей..." onkeyup="performSearch(this.value)">
+    </div>
+  </div>
+
+  <!-- Боковая панель -->
+  <aside class="sidebar" id="sidebar">
+    {% include sidebar.html %}
+  </aside>
+
+  <!-- Основной контент -->
+  <div class="main-wrapper">
+    <!-- Поиск (десктоп) -->
+    <div class="desktop-search">
+      <input type="text" id="desktopSearchInput" placeholder="Поиск статей..." onkeyup="performSearch(this.value)">
+    </div>
+
+    <!-- Результаты поиска -->
+    <div id="searchResults" class="search-results" style="display: none;"></div>
+
+    <!-- Контент страницы -->
+    <main class="content">
+      {{ content }}
+    </main>
+  </div>
+
+  <!-- JavaScript для поиска и навигации -->
+  <script src="{{ '/assets/js/search.js' | relative_url }}"></script>
+  <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+</body>
+</html>

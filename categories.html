@@ -1,0 +1,46 @@
+---
+layout: default
+title: Категории
+permalink: /categories/
+---
+
+<div class="categories-page">
+  <h1>Категории</h1>
+
+  {% for category in site.data.categories %}
+    <div class="category-section" id="{{ category.name | downcase }}">
+      <h2 class="category-title">{{ category.name }}</h2>
+
+      {% assign category_posts = site.posts | where_exp: "post", "post.categories contains category.name" | sort: "title" %}
+
+      {% if category_posts.size > 0 %}
+        <div class="category-articles-grid">
+          {% for post in category_posts %}
+            <div class="search-result-item">
+              <div class="search-result-content">
+                <h3 class="search-result-title">
+                  <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+                </h3>
+                <p class="search-result-excerpt">
+                  {{ post.content | strip_html | truncatewords: 30 }}
+                </p>
+                <div class="search-result-categories">
+                  {% for cat in post.categories %}
+                    <span class="category-tag">{{ cat }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              {% if post.image %}
+                <div class="search-result-image">
+                  <img src="{{ post.image }}" alt="{{ post.title }}" loading="lazy">
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="no-articles">Статей в этой категории пока нет</p>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
