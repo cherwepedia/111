@@ -1,94 +1,6 @@
-html ---
+---
 layout: default
 ---
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Находим все абзацы статьи
-  const articleContent = document.querySelector(".article-content");
-  if (!articleContent) return;
-  // Ищем группы ссылок на картинки
-  const mdImageRegex = /(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|md\.jpg))/gi;
-  articleContent.innerHTML = articleContent.innerHTML.replace(
-    /(<p>.*?<\/p>)/gs,
-    block => {
-      let images = [...block.matchAll(mdImageRegex)];
-      if (images.length < 2) return block; // галерея только при 2+ изображениях
-      let galleryId = "gallery_" + Math.random().toString(36).substr(2, 9);
-      // создаём HTML-галерею
-      let galleryHTML = `
-        <div class="inline-gallery" data-gallery="${galleryId}">
-          <div class="gallery-images">
-            ${images
-              .map(
-                (m, i) =>
-                  `<img src="${m[1]}" data-index="${i}" loading="lazy">`
-              )
-              .join("")}
-          </div>
-          <div class="gallery-nav">
-            <button class="prev">‹</button>
-            <button class="next">›</button>
-          </div>
-        </div>
-      `;
-      // удаляем ссылки из текста абзаца
-      let cleaned = block.replace(mdImageRegex, "");
-      // вставляем галерею перед текстом
-      return galleryHTML + cleaned;
-    }
-  );
-  // логика листания
-  document.querySelectorAll(".inline-gallery").forEach(gallery => {
-    let imgs = gallery.querySelectorAll("img");
-    let index = 0;
-    const show = i => {
-      imgs.forEach((img, n) => {
-        img.style.display = n === i ? "block" : "none";
-      });
-    };
-    show(0);
-    gallery.querySelector(".prev").onclick = () => {
-      index = (index - 1 + imgs.length) % imgs.length;
-      show(index);
-    };
-    gallery.querySelector(".next").onclick = () => {
-      index = (index + 1) % imgs.length;
-      show(index);
-    };
-    // открытие в лайтбоксе
-    imgs.forEach((img, i) => {
-      img.onclick = () => openLightbox(imgs, i);
-    });
-  });
-  // лайтбокс
-  function openLightbox(images, index) {
-    const lb = document.createElement("div");
-    lb.className = "lightbox";
-    lb.innerHTML = `
-      <span class="lightbox-close">&times;</span>
-      <img class="lightbox-content">
-      <div class="lightbox-nav">
-        <button class="lb-prev">‹</button>
-        <button class="lb-next">›</button>
-      </div>
-    `;
-    document.body.appendChild(lb);
-    const content = lb.querySelector(".lightbox-content");
-    const show = i => content.src = images[i].src;
-    show(index);
-    lb.querySelector(".lightbox-close").onclick = () => lb.remove();
-    lb.querySelector(".lb-prev").onclick = () => {
-      index = (index - 1 + images.length) % images.length;
-      show(index);
-    };
-    lb.querySelector(".lb-next").onclick = () => {
-      index = (index + 1) % images.length;
-      show(index);
-    };
-    lb.style.display = "flex";
-  }
-});
-</script>
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
@@ -101,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/105469789" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
+
 <article class="article">
   <h1 class="article-title">{{ page.title }}</h1>
   <div class="article-content">
@@ -124,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
       {% endif %}
     </aside>
     {% endif %}
+
     <!-- Оглавление -->
     <div class="toc">
       <div class="toc-header" onclick="toggleTOC()">
@@ -134,7 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <!-- Генерируется JS -->
       </div>
     </div>
-    <!-- Основной текст статьи, первый абзац исключён из TOC -->
+
+    <!-- Основной текст статьи -->
     <div class="article-text">
       {% assign paragraphs = content | split: '\n\n' %}
       {% assign first_paragraph = paragraphs[0] %}
@@ -142,7 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
       {% assign rest_paragraphs = paragraphs | slice: 1, 999 %}
       {{ rest_paragraphs | join: "\n\n" }}
     </div>
-    <!-- Галерея -->
+
+    <!-- Галерея в конце статьи -->
     {% if page.gallery %}
     <div class="gallery-section">
       <h2>Галерея</h2>
@@ -155,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     </div>
     {% endif %}
+
     <!-- Категории -->
     {% if page.categories %}
     <div class="article-categories">
@@ -166,16 +83,18 @@ document.addEventListener("DOMContentLoaded", () => {
     {% endif %}
   </div>
 </article>
-<!-- Lightbox модальное окно -->
+
+<!-- Lightbox -->
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-  <span class="lightbox-close">&times;</span>
+  <span class="lightbox-close">×</span>
   <img class="lightbox-content" id="lightboxImage">
   <div class="lightbox-nav">
-    <button class="lightbox-prev" onclick="event.stopPropagation(); changeLightboxImage(-1)">❮</button>
-    <button class="lightbox-next" onclick="event.stopPropagation(); changeLightboxImage(1)">❯</button>
+    <button class="lightbox-prev" onclick="event.stopPropagation(); changeLightboxImage(-1)">Previous</button>
+    <button class="lightbox-next" onclick="event.stopPropagation(); changeLightboxImage(1)">Next</button>
   </div>
   <div class="lightbox-counter" id="lightboxCounter"></div>
 </div>
+
 <script>
 const galleryImages = [
   {% if page.gallery %}
@@ -184,22 +103,26 @@ const galleryImages = [
     {% endfor %}
   {% endif %}
 ];
+
+/* ====================== ВСЁ НИЖЕ — ОБНОВЛЁННЫЙ И УЛУЧШЕННЫЙ JS ====================== */
+
 document.addEventListener('DOMContentLoaded', function() {
   generateTOC();
-  processContentImages();
+  processInlineAlbums();      // ← НОВАЯ главная фича
+  processContentMedia();      // ← обновлённая старая фича (одиночные картинки + YouTube)
 });
-// TOC: игнорируем первый абзац
+
+/* TOC */
 function generateTOC() {
   const content = document.querySelector('.article-text');
   const headings = Array.from(content.querySelectorAll('h2, h3'));
-  // исключаем первый блок (если нужен, можно более умно)
   if (headings.length === 0) {
     document.querySelector('.toc').style.display = 'none';
     return;
   }
   let tocHTML = '<ol>';
-  headings.forEach((heading, index) => {
-    const id = 'heading-' + index;
+  headings.forEach((heading, i) => {
+    const id = 'heading-' + i);
     heading.id = id;
     const level = heading.tagName === 'H2' ? 'toc-level-1' : 'toc-level-2';
     tocHTML += `<li class="${level}"><a href="#${id}">${heading.textContent}</a></li>`;
@@ -207,98 +130,138 @@ function generateTOC() {
   tocHTML += '</ol>';
   document.getElementById('tocContent').innerHTML = tocHTML;
 }
+
 function toggleTOC() {
-  const tocContent = document.getElementById('tocContent');
-  const tocToggle = document.getElementById('tocToggle');
-  if (tocContent.style.display === 'none') {
-    tocContent.style.display = 'block';
-    tocToggle.textContent = 'скрыть';
+  const content = document.getElementById('tocContent');
+  const toggle = document.getElementById('tocToggle');
+  if (content.style.display === 'none' || !content.style.display) {
+    content.style.display = 'block';
+    toggle.textContent = 'скрыть';
   } else {
-    tocContent.style.display = 'none';
-    tocToggle.textContent = 'показать';
+    content.style.display = 'none';
+    toggle.textContent = 'показать';
   }
 }
-// Контентные медиа
-function processContentImages() {
-  const articleText = document.querySelector('.article-text');
-  const sections = articleText.querySelectorAll('h2');
-  sections.forEach(section => {
-    let nextElement = section.nextElementSibling;
-    const mediaItems = [];
-    const mediaElements = [];
-    while (nextElement && nextElement.tagName !== 'H2') {
-      if (nextElement.tagName === 'P') {
-        const text = nextElement.textContent;
-        const imageRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp))/gi;
-        const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/gi;
-        let match;
-        while ((match = imageRegex.exec(text)) !== null) {
-          mediaItems.push({ type: 'image', url: match[1] });
-          nextElement.innerHTML = nextElement.innerHTML.replace(match[1], '');
-        }
-        while ((match = youtubeRegex.exec(text)) !== null) {
-          mediaItems.push({ type: 'youtube', id: match[1] });
-          nextElement.innerHTML = nextElement.innerHTML.replace(match[0], '');
-        }
-      }
-      if (nextElement.tagName === 'P' && nextElement.textContent.trim()) {
-        mediaElements.push(nextElement);
-      }
-      nextElement = nextElement.nextElementSibling;
+
+/* НОВАЯ УНИВЕРСАЛЬНАЯ ФУНКЦИЯ — встроенные альбомы слева (как в Википедии) */
+function processInlineAlbums() {
+  const paragraphs = document.querySelectorAll('.article-text p');
+
+  paragraphs.forEach(p => {
+    // Собираем все ссылки на картинки в этом абзаце
+    const links = Array.from(p.querySelectorAll('a[href$=".jpg"], a[href$=".jpeg"], a[href$=".png"], a[href$=".webp"], a[href$=".gif"]'));
+    const images = links.map(a => {
+      const img = a.querySelector('img');
+      return img ? img.src : a.href;
+    }).filter(Boolean);
+
+    if (images.length < 2) return; // альбом только от 2+ картинок
+
+    // Создаём альбом
+    const album = document.createElement('div');
+    album.className = 'inline-album';
+
+    const grid = document.createElement('div');
+    grid.className = 'inline-album-grid';
+
+    images.forEach((src, idx) => {
+      const item = document.createElement('div');
+      item.className = 'inline-album-item';
+      item.onclick = (e) => {
+        e.stopPropagation();
+        openLightbox(idx, images);
+      };
+
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = `Фото ${idx + 1}`;
+      img.loading = 'lazy';
+      item.appendChild(img);
+      grid.appendChild(item);
+    });
+
+    album.appendChild(grid);
+
+    // Вставляем альбом перед абзацем
+    p.parentNode.insertBefore(album, p);
+
+    // Удаляем все ссылки-картинки из текста
+    links.forEach(a => a.remove());
+
+    // Если абзац стал пустым — удаляем его полностью
+    if (!p.innerHTML.trim() || p.innerHTML.trim() === '<br>') {
+      p.remove();
     }
-    if (mediaItems.length > 0 && mediaElements.length > 0) {
-      const mediaBlock = document.createElement('div');
-      mediaBlock.className = 'content-media-block';
-      mediaItems.forEach((item, index) => {
-        if (item.type === 'image') {
-          const img = document.createElement('img');
-          img.src = item.url;
-          img.alt = 'Изображение';
-          img.loading = 'lazy';
-          img.onclick = function() { openLightbox(index, mediaItems.map(m => m.url).filter(Boolean)); };
-          mediaBlock.appendChild(img);
-        } else if (item.type === 'youtube') {
-          const iframe = document.createElement('iframe');
-          iframe.src = `https://www.youtube.com/embed/${item.id}`;
-          iframe.frameBorder = '0';
-          iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-          iframe.allowFullscreen = true;
-          iframe.loading = 'lazy';
-          mediaBlock.appendChild(iframe);
-        }
+
+    // Защита от наползания следующего текста
+    const clearer = document.createElement('div');
+    clearer.className = 'clear-after-album';
+    album.after(clearer);
+  });
+}
+
+/* Обновлённая обработка одиночных картинок и YouTube (по-прежнему работает) */
+function processContentMedia() {
+  const articleText = document.querySelector('.article-text');
+
+  articleText.querySelectorAll('p').forEach(p => {
+    const youtubeMatch = p.innerHTML.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/i);
+    const hasImages = p.querySelector('img') || p.innerHTML.match(/https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp/i);
+
+    if (youtubeMatch || hasImages) {
+      const block = document.createElement('div');
+      block.className = 'content-media-block';
+
+      // YouTube
+      if (youtubeMatch) {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+        iframe.allowFullscreen = true;
+        iframe.loading = 'lazy';
+        iframe.frameBorder = '0';
+        block.appendChild(iframe);
+        p.innerHTML = p.innerHTML.replace(youtubeMatch[0], '');
+      }
+
+      // Одиночные картинки (если остались)
+      p.querySelectorAll('img').forEach(img => {
+        img.onclick = () => openLightbox(0, [img.src]);
+        block.appendChild(img.cloneNode());
+        img.remove();
       });
-      section.insertAdjacentElement('afterend', mediaBlock);
+
+      if (block.children.length > 0) {
+        p.parentNode.insertBefore(block, p);
+      }
     }
   });
 }
-// Lightbox
+
+/* Lightbox — без изменений */
 let currentLightboxIndex = 0;
 let currentLightboxImages = [];
+
 function openLightbox(index, images) {
   currentLightboxIndex = index;
   currentLightboxImages = images;
-  const lightbox = document.getElementById('lightbox');
-  const img = document.getElementById('lightboxImage');
-  const counter = document.getElementById('lightboxCounter');
-  img.src = images[index];
-  counter.textContent = `${index + 1} / ${images.length}`;
-  lightbox.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+  document.getElementById('lightboxImage').src = images[index];
+  document.getElementById('lightboxCounter').textContent = `${index + 1} / ${images.length}`;
+  document.getElementById('lightbox').style.display = 'flex';
+  document.body.style.overflow = 'hidden;
 }
+
 function closeLightbox() {
   document.getElementById('lightbox').style.display = 'none';
   document.body.style.overflow = 'auto';
 }
-function changeLightboxImage(direction) {
-  currentLightboxIndex += direction;
-  if (currentLightboxIndex < 0) currentLightboxIndex = currentLightboxImages.length - 1;
-  else if (currentLightboxIndex >= currentLightboxImages.length) currentLightboxIndex = 0;
-  const img = document.getElementById('lightboxImage');
-  const counter = document.getElementById('lightboxCounter');
-  img.src = currentLightboxImages[currentLightboxIndex];
-  counter.textContent = `${currentLightboxIndex + 1} / ${currentLightboxImages.length}`;
+
+function changeLightboxImage(dir) {
+  currentLightboxIndex = (currentLightboxIndex + dir + currentLightboxImages.length) % currentLightboxImages.length;
+  document.getElementById('lightboxImage').src = currentLightboxImages[currentLightboxIndex];
+  document.getElementById('lightboxCounter').textContent = `${currentLightboxIndex + 1} / ${currentLightboxImages.length}`;
 }
-document.addEventListener('keydown', function(e) {
+
+document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowLeft') changeLightboxImage(-1);
   if (e.key === 'ArrowRight') changeLightboxImage(1);
