@@ -547,64 +547,122 @@ img[loading="lazy"].loaded, img[loading="lazy"]:not([src]) { opacity:1; }
 html { scroll-behavior: smooth; }
 
 .inline-gallery {
+
   float: left;
+
   width: 250px;
-  margin: 0 15px 15px 0; /* нижний отступ для обтекания текста */
+
+  margin: 0 15px 1.5em 0;        /* увеличил нижний отступ — это главное */
+
   border: 1px solid var(--border-color);
+
   background: var(--infobox-bg);
+
   padding: 5px;
+
   position: relative;
+
+  clear: left;                   /* ← заставляет каждую новую галерею начинаться с новой строки */
+
 }
 
-.inline-gallery-wrapper {
-  /* убираем clear: left, чтобы сохранить обтекание */
-  margin-bottom: 1em; /* симметричный вертикальный отступ между галереями */
+.inline-gallery + p,
+
+p + .inline-gallery {
+
+  margin-top: 1.5em;             /* одинаковый отступ сверху и снизу, как у обычных абзацев */
+
 }
 
 .inline-gallery img {
+
   width: 100%;
+
   display: none;
+
   cursor: pointer;
+
   border: 1px solid var(--border-color);
+
 }
 
 .inline-gallery img:hover {
+
   opacity: 0.85;
+
+}
+
+.inline-gallery img:first-of-type {
+
+  display: block;                /* первая картинка всегда видна */
+
 }
 
 .inline-gallery .gallery-nav {
+
   position: absolute;
+
   bottom: 5px;
+
+  left: 0;
+
   width: 100%;
+
   display: flex;
+
   justify-content: space-between;
+
   pointer-events: none;
+
 }
 
 .inline-gallery button {
+
   pointer-events: all;
+
   background: rgba(0,0,0,0.2);
+
   color: white;
+
   border: none;
+
   font-size: 22px;
+
   padding: 5px 10px;
+
   cursor: pointer;
+
 }
 
 .inline-gallery button:hover {
+
   background: rgba(0,0,0,0.35);
+
 }
 
-/* адаптация для мобильных */
+/* адаптация под мобилки */
+
 @media (max-width: 768px) {
-  .inline-gallery {
-    float: none;
-    width: 100%;
-    margin: 0 0 15px 0;
-  }
-  .inline-gallery-wrapper {
-    margin-bottom: 15px; /* вертикальный отступ между галереями */
-  }
-}
 
+  .inline-gallery {
+
+    float: none;
+
+    width: 100%;
+
+    margin: 0 0 1.5em 0;
+
+    clear: both;
+
+  }
+
+  .inline-gallery + p,
+
+  p + .inline-gallery {
+
+    margin-top: 1.5em;
+
+  }
+
+}
 
