@@ -4,19 +4,22 @@ layout: default
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
+  // Находим все абзацы статьи
   const articleContent = document.querySelector(".article-content");
   if (!articleContent) return;
 
+  // Ищем группы ссылок на картинки
   const mdImageRegex = /(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|md\.jpg))/gi;
 
   articleContent.innerHTML = articleContent.innerHTML.replace(
     /(<p>.*?<\/p>)/gs,
     block => {
       let images = [...block.matchAll(mdImageRegex)];
-      if (images.length < 2) return block;
+      if (images.length < 2) return block; // галерея только при 2+ изображениях
 
       let galleryId = "gallery_" + Math.random().toString(36).substr(2, 9);
 
+      // создаём HTML-галерею
       let galleryHTML = `
         <div class="inline-gallery" data-gallery="${galleryId}">
           <div class="gallery-images">
@@ -34,21 +37,18 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
 
+      // удаляем ссылки из текста абзаца
       let cleaned = block.replace(mdImageRegex, "");
 
-      return `
-        <div class="gallery-block">
-          ${galleryHTML}
-          ${cleaned}
-        </div>
-      `;
+      // вставляем галерею перед текстом
+      return galleryHTML + cleaned;
     }
   );
 
+  // логика листания
   document.querySelectorAll(".inline-gallery").forEach(gallery => {
     let imgs = gallery.querySelectorAll("img");
     let index = 0;
-
     const show = i => {
       imgs.forEach((img, n) => {
         img.style.display = n === i ? "block" : "none";
@@ -65,11 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
       show(index);
     };
 
+    // открытие в лайтбоксе
     imgs.forEach((img, i) => {
       img.onclick = () => openLightbox(imgs, i);
     });
   });
 
+  // лайтбокс
   function openLightbox(images, index) {
     const lb = document.createElement("div");
     lb.className = "lightbox";
@@ -101,9 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
-
-
-
 
 
 <!-- Yandex.Metrika counter -->
@@ -151,10 +150,11 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="toc-toggle" id="tocToggle">показать</span>
       </div>
       <div class="toc-content" id="tocContent" style="display: none;">
+        <!-- Генерируется JS -->
       </div>
     </div>
 
-    <!-- Основной текст статьи -->
+    <!-- Основной текст статьи, первый абзац исключён из TOC -->
     <div class="article-text">
       {% assign paragraphs = content | split: '\n\n' %}
       {% assign first_paragraph = paragraphs[0] %}
@@ -189,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 </article>
 
-<!-- Lightbox -->
+<!-- Lightbox модальное окно -->
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
   <span class="lightbox-close">&times;</span>
   <img class="lightbox-content" id="lightboxImage">
@@ -214,10 +214,11 @@ document.addEventListener('DOMContentLoaded', function() {
   processContentImages();
 });
 
-// TOC
+// TOC: игнорируем первый абзац
 function generateTOC() {
   const content = document.querySelector('.article-text');
   const headings = Array.from(content.querySelectorAll('h2, h3'));
+  // исключаем первый блок (если нужен, можно более умно)
   if (headings.length === 0) {
     document.querySelector('.toc').style.display = 'none';
     return;
