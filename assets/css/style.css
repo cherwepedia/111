@@ -9,13 +9,11 @@
   --infobox-bg: #f8f9fa;
   --heading-border: #a2a9b1;
 }
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
 body {
   font-family: 'Linux Libertine', Georgia, 'Times New Roman', serif;
   font-size: 16px;
@@ -23,31 +21,25 @@ body {
   color: var(--text-color);
   background: var(--bg-color);
 }
-
 a {
   color: var(--link-color);
   text-decoration: none;
 }
-
 a:visited {
   color: var(--link-visited);
 }
-
 a:hover {
   text-decoration: underline;
 }
-
 img {
   max-width: 100%;
   height: auto;
 }
-
 /* ===== Layout ===== */
 body {
   display: flex;
   min-height: 100vh;
 }
-
 .sidebar {
   position: fixed;
   left: 0;
@@ -60,25 +52,21 @@ body {
   z-index: 100;
   overflow-y: auto;
 }
-
 .main-wrapper {
   margin-left: 200px;
   flex: 1;
   padding: 20px;
   max-width: 1200px;
 }
-
 /* ===== Sidebar ===== */
 .sidebar-content {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .sidebar-logo {
   margin-bottom: 30px;
 }
-
 .logo-circle {
   width: 80px;
   height: 80px;
@@ -91,19 +79,15 @@ body {
   color: var(--text-color);
   background: white;
 }
-
 .sidebar-nav {
   width: 100%;
 }
-
 .sidebar-nav ul {
   list-style: none;
 }
-
 .sidebar-nav li {
   border-bottom: 1px solid var(--border-color);
 }
-
 .sidebar-nav a {
   display: block;
   padding: 12px 20px;
@@ -111,12 +95,10 @@ body {
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
 }
-
 .sidebar-nav a:hover {
   background: rgba(0, 0, 0, 0.05);
   text-decoration: none;
 }
-
 /* ===== Поиск ===== */
 .desktop-search {
   margin-bottom: 20px;
@@ -124,7 +106,6 @@ body {
   background: white;
   padding: 8px 12px;
 }
-
 .desktop-search input {
   width: 100%;
   border: none;
@@ -132,18 +113,15 @@ body {
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
 }
-
 .mobile-header {
   display: none;
 }
-
 /* ===== Результаты поиска ===== */
 .search-results {
   margin-bottom: 30px;
   border-top: 1px solid var(--border-color);
   padding-top: 20px;
 }
-
 .search-result-item {
   display: flex;
   justify-content: space-between;
@@ -151,33 +129,27 @@ body {
   padding: 15px 0;
   border-bottom: 1px solid #e8e8e8;
 }
-
 .search-result-content {
   flex: 1;
   padding-right: 20px;
 }
-
 .search-result-title {
   font-size: 20px;
   margin-bottom: 5px;
   font-family: 'Linux Libertine', serif;
 }
-
 .search-result-title a {
   color: #1a0dab;
 }
-
 .search-result-excerpt {
   font-size: 14px;
   color: #545454;
   line-height: 1.5;
   margin-bottom: 8px;
 }
-
 .search-result-categories {
   margin-top: 5px;
 }
-
 .search-result-image {
   flex-shrink: 0;
   width: 120px;
@@ -185,13 +157,11 @@ body {
   overflow: hidden;
   border: 1px solid var(--border-color);
 }
-
 .search-result-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
 /* ===== Главная страница ===== */
 .homepage-header {
   text-align: center;
@@ -199,30 +169,25 @@ body {
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 30px;
 }
-
 .site-title {
   font-size: 42px;
   font-weight: normal;
   margin-bottom: 10px;
   font-family: 'Linux Libertine', serif;
 }
-
 .site-description {
   font-size: 18px;
   color: #54595d;
 }
-
 .categories-section {
   max-width: 800px;
   margin: 0 auto;
 }
-
 .category-block {
   margin-bottom: 30px;
   border: 1px solid var(--border-color);
   background: white;
 }
-
 .category-header {
   background: var(--sidebar-bg);
   padding: 12px 15px;
@@ -232,47 +197,38 @@ body {
   align-items: center;
   border-bottom: 1px solid var(--border-color);
 }
-
 .category-header:hover {
   background: #e8eaed;
 }
-
 .category-header h2 {
   font-size: 20px;
   font-weight: normal;
   margin: 0;
 }
-
 .toggle-icon {
   font-size: 14px;
   color: #666;
 }
-
 .category-articles {
   padding: 15px;
 }
-
 .article-list {
   list-style: none;
   column-count: 2;
   column-gap: 20px;
 }
-
 .article-list li {
   margin-bottom: 8px;
   break-inside: avoid;
 }
-
 .article-list a {
   font-size: 15px;
 }
-
 .no-articles {
   color: #666;
   font-style: italic;
   font-size: 14px;
 }
-
 /* ===== Страница категорий ===== */
 .categories-page h1 {
   font-size: 32px;
@@ -281,11 +237,9 @@ body {
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 10px;
 }
-
 .category-section {
   margin-bottom: 50px;
 }
-
 .category-title {
   font-size: 26px;
   font-weight: normal;
@@ -293,18 +247,15 @@ body {
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border-color);
 }
-
 .category-articles-grid {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
-
 /* ===== Статья ===== */
 .article {
   max-width: 100%;
 }
-
 .article-title {
   font-size: 32px;
   font-weight: normal;
@@ -312,13 +263,11 @@ body {
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 10px;
 }
-
 .article-content {
   width: 100%;
   overflow: hidden;
 }
-
-/* ===== Инфобокс ===== */
+/* ===== Инфобокс встроенный в текст ===== */
 .infobox {
   width: 280px;
   float: right;
@@ -327,28 +276,23 @@ body {
   border: 1px solid var(--border-color);
   font-size: 14px;
 }
-
 .infobox-image {
   width: 100%;
   text-align: center;
   background: white;
 }
-
 .infobox-image img {
   width: 100%;
   height: auto;
   display: block;
 }
-
 .infobox-table {
   width: 100%;
   border-collapse: collapse;
 }
-
 .infobox-table tr {
   border-top: 1px solid var(--border-color);
 }
-
 .infobox-table th {
   background: #f0f0f0;
   padding: 8px;
@@ -359,12 +303,10 @@ body {
   font-family: 'Roboto', sans-serif;
   font-size: 13px;
 }
-
 .infobox-table td {
   padding: 8px;
   vertical-align: top;
 }
-
 /* ===== Оглавление ===== */
 .toc {
   background: var(--infobox-bg);
@@ -376,38 +318,31 @@ body {
   max-width: 100%;
   font-size: 14px;
 }
-
 .toc-header {
   display: flex;
   justify-content: space-between;
   cursor: pointer;
   margin-bottom: 5px;
 }
-
 .toc-toggle {
   color: var(--link-color);
   font-size: 13px;
 }
-
 .toc-content ol {
   margin-left: 20px;
   margin-top: 10px;
 }
-
 .toc-content li {
   margin-bottom: 5px;
 }
-
 .toc-level-2 {
   margin-left: 20px;
 }
-
 /* ===== Контент статьи ===== */
 .article-text {
   hyphens: auto;
   word-wrap: break-word;
 }
-
 .article-text h2 {
   font-size: 24px;
   font-weight: normal;
@@ -415,29 +350,24 @@ body {
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 5px;
 }
-
 .article-text h3 {
   font-size: 20px;
   font-weight: normal;
   margin: 25px 0 12px 0;
 }
-
 .article-text p {
   margin-bottom: 15px;
   text-align: justify;
 }
-
 .article-text ul,
 .article-text ol {
   margin-left: 30px;
   margin-bottom: 15px;
 }
-
 .article-text li {
   margin-bottom: 5px;
 }
-
-/* ===== Медиа блок ===== */
+/* ===== Медиа блоки в контенте ===== */
 .content-media-block {
   float: right;
   width: 250px;
@@ -446,7 +376,6 @@ body {
   background: var(--infobox-bg);
   padding: 5px;
 }
-
 .content-media-block img {
   width: 100%;
   display: block;
@@ -454,29 +383,197 @@ body {
   cursor: pointer;
   border: 1px solid var(--border-color);
 }
-
 .content-media-block img:hover {
   opacity: 0.8;
 }
-
 .content-media-block iframe {
   width: 100%;
   height: 140px;
   margin-bottom: 5px;
   border: 1px solid var(--border-color);
 }
+/* ===== Галерея ===== */
+.gallery-section {
+  margin-top: 40px;
+  clear: both;
+  overflow: hidden;
+}
+.gallery-section h2 {
+  font-size: 24px;
+  font-weight: normal;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 5px;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+.gallery-item {
+  cursor: pointer;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  aspect-ratio: 1;
+}
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+.gallery-item:hover img {
+  transform: scale(1.1);
+}
+/* ===== Категории в статье ===== */
+.article-categories {
+  margin-top: 30px;
+  padding: 15px;
+  background: var(--sidebar-bg);
+  border: 1px solid var(--border-color);
+  font-size: 14px;
+  clear: both;
+  overflow: hidden;
+}
+.category-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  margin: 0 5px 5px 0;
+  background: #eaecf0;
+  border: 1px solid var(--border-color);
+  color: var(--link-color);
+  font-size: 13px;
+}
+.category-tag:hover {
+  background: #ddd;
+  text-decoration: none;
+}
+/* ===== Lightbox ===== */
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
+}
+.lightbox-content {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+}
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.lightbox-close:hover {
+  color: #bbb;
+}
+.lightbox-nav {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.lightbox-nav button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  font-size: 30px;
+  padding: 10px 20px;
+  cursor: pointer;
+  pointer-events: all;
+}
+.lightbox-nav button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+.lightbox-counter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 15px;
+}
+/* ===== Мобильная версия ===== */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); transition: transform 0.3s; width: 250px; z-index: 1001; }
+  .sidebar.active { transform: translateX(0); }
+  .mobile-menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index:1000; }
+  .mobile-menu-overlay.active { display: block; }
+  .mobile-header { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--sidebar-bg); border-bottom:1px solid var(--border-color); position:fixed; top:0; left:0; right:0; z-index:99; }
+  .menu-toggle { background:none; border:none; font-size:24px; cursor:pointer; padding:5px 10px; }
+  .mobile-search { flex:1; }
+  .mobile-search input { width:100%; padding:8px 12px; border:1px solid var(--border-color); outline:none; font-family:'Roboto', sans-serif; font-size:14px; }
+  .desktop-search { display:none; }
+  .main-wrapper { margin-left:0; margin-top:60px; padding:15px; }
+  .infobox { width:100%; float:none; margin:0 0 20px 0; max-height:none; }
+  .article-content { overflow:visible; }
+  .content-media-block { float:none; width:100%; margin:0 0 15px 0; }
+  .content-media-block iframe { height:200px; }
+  .article-list { column-count:1; }
+  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(100px,1fr)); }
+  .search-result-item { flex-direction: column-reverse; }
+  .search-result-content { padding-right:0; }
+  .search-result-image { width:100%; height:150px; margin-bottom:10px; }
+  .lightbox-nav button { font-size:24px; padding:8px 15px; }
+  .lightbox-close { right:20px; font-size:35px; }
+}
+@media (max-width: 480px) {
+  .site-title { font-size:32px; }
+  .article-title { font-size:26px; }
+  .article-text h2 { font-size:20px; }
+  .toc { min-width:100%; max-width:100%; display:block; }
+}
+/* ===== Оптимизация производительности ===== */
+img[loading="lazy"] { opacity:0; transition: opacity 0.3s; }
+img[loading="lazy"].loaded, img[loading="lazy"]:not([src]) { opacity:1; }
+/* ===== Плавная прокрутка ===== */
+html { scroll-behavior: smooth; }
 
-/* ФИКС-КОНТЕЙНЕР — делает так, чтобы абзац ВСЕГДА уходил вниз */
+
+
+
+/* Контейнер, который содержит галерею и текст — формирует BFC, поэтому следующий блок начнётся под ним */
+.gallery-block {
+  overflow: auto;        /* создаёт BFC и "включает" float внутрь контейнера */
+  margin-bottom: 18px;   /* отступ вниз — следующий абзац будет ниже */
+  clear: both;           /* на всякий случай — гарантирует, что контейнер не налезет на предыдущие float'ы */
+}
+
+/* Плавающая галерея слева */
 .inline-gallery {
   float: left;
   width: 250px;
-  margin: 0 15px 10px 0; /* ← нижний отступ, чтобы следующее p не поднималось */
+  margin: 0 15px 0 0; /* правый отступ чтобы текст не прилипал */
   border: 1px solid var(--border-color);
   background: var(--infobox-bg);
   padding: 5px;
   position: relative;
 }
 
+/* Текстная часть внутри контейнера — просто блок, который обтекает float */
+.gallery-text {
+  /* никакого float, чтобы текст корректно обтекал галерею внутри этого блока */
+  min-width: 0;
+}
+
+/* картинки в галерее */
 .inline-gallery img {
   width: 100%;
   display: none;
@@ -484,6 +581,7 @@ body {
   border: 1px solid var(--border-color);
 }
 
+/* навигация */
 .inline-gallery .gallery-nav {
   position: absolute;
   bottom: 5px;
@@ -503,48 +601,8 @@ body {
   cursor: pointer;
 }
 
-/* Лайтбокс */
-.lightbox {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-.lightbox-content {
-  max-width: 90%;
-  max-height: 90%;
-}
-.lightbox-close {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 40px;
-  color: white;
-  cursor: pointer;
-}
-.lightbox-nav {
-  position: absolute;
-  bottom: 40px;
-  display: flex;
-  gap: 25px;
-}
-.lightbox-nav button {
-  background: rgba(255,255,255,0.2);
-  border: none;
-  font-size: 40px;
-  color: white;
-  padding: 5px 15px;
-  cursor: pointer;
-}
-
-/* Мобилка */
+/* мобильная адаптация */
 @media (max-width: 768px) {
-  .inline-gallery {
-    float: none;
-    width: 100%;
-    margin: 0 0 15px 0;
-  }
+  .inline-gallery { float: none; width: 100%; margin: 0 0 10px 0; }
+  .gallery-block { overflow: visible; }
 }
