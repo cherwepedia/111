@@ -1,82 +1,8 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html lang="ru">
+<head>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-  const articleContent = document.querySelector(".article-content");
-  if (!articleContent) return;
-
-  const mdImageRegex = /(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|md\.jpg))/gi;
-
-  articleContent.innerHTML = articleContent.innerHTML.replace(
-    /(<p>.*?<\/p>)/gs,
-    block => {
-      let images = [...block.matchAll(mdImageRegex)];
-      if (images.length < 2) return block;
-
-      let galleryId = "gallery_" + Math.random().toString(36).substr(2, 9);
-
-      let galleryHTML = `
-        <span class="inline-gallery" data-gallery="${galleryId}">
-          <div class="gallery-images">
-            ${images.map((m,i)=>`<img src="${m[1]}" data-index="${i}" loading="lazy">`).join("")}
-          </div>
-          <div class="gallery-nav">
-            <button class="prev">‹</button>
-            <button class="next">›</button>
-          </div>
-        </span>
-      `;
-
-      let cleaned = block.replace(mdImageRegex, "");
-
-      /* ВСТРАИВАЕМ ГАЛЕРЕЮ ВНУТРЬ ТОГО ЖЕ <p> */
-      return cleaned.replace('<p>', `<p>${galleryHTML}`);
-    }
-  );
-
-  document.querySelectorAll(".inline-gallery").forEach(gallery => {
-    let imgs = gallery.querySelectorAll("img");
-    let index = 0;
-
-    const show = i => imgs.forEach((img,n)=>img.style.display = n===i ? "block" : "none");
-    show(0);
-
-    gallery.querySelector(".prev").onclick = () => { index = (index-1+imgs.length)%imgs.length; show(index); };
-    gallery.querySelector(".next").onclick = () => { index = (index+1)%imgs.length; show(index); };
-
-    imgs.forEach((img,i)=>img.onclick=()=>openLightbox(imgs,i));
-  });
-
-  function openLightbox(images,index){
-    const lb=document.createElement("div");
-    lb.className="lightbox";
-    lb.innerHTML=`
-      <span class="lightbox-close">&times;</span>
-      <img class="lightbox-content">
-      <div class="lightbox-nav">
-        <button class="lb-prev">‹</button>
-        <button class="lb-next">›</button>
-      </div>
-    `;
-    document.body.appendChild(lb);
-
-    const content=lb.querySelector(".lightbox-content");
-    const show=i=>content.src=images[i].src;
-    show(index);
-
-    lb.querySelector(".lightbox-close").onclick=()=>lb.remove();
-    lb.querySelector(".lb-prev").onclick=()=>{index=(index-1+images.length)%images.length;show(index);};
-    lb.querySelector(".lb-next").onclick=()=>{index=(index+1)%images.length;show(index);};
-
-    lb.style.display="flex";
-  }
-});
-</script>
-
-<!-- Yandex.Metrika counter -->
+  <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
         m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
