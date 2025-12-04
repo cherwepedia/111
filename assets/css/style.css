@@ -546,123 +546,68 @@ img[loading="lazy"].loaded, img[loading="lazy"]:not([src]) { opacity:1; }
 /* ===== Плавная прокрутка ===== */
 html { scroll-behavior: smooth; }
 
+
 .inline-gallery {
-
   float: left;
-
   width: 250px;
-
   margin: 0 15px 1.5em 0;        /* увеличил нижний отступ — это главное */
-
   border: 1px solid var(--border-color);
-
   background: var(--infobox-bg);
-
   padding: 5px;
-
   position: relative;
-
   clear: left;                   /* ← заставляет каждую новую галерею начинаться с новой строки */
-
 }
 
 .inline-gallery + p,
-
 p + .inline-gallery {
-
   margin-top: 1.5em;             /* одинаковый отступ сверху и снизу, как у обычных абзацев */
-
 }
 
 .inline-gallery img {
-
   width: 100%;
-
   display: none;
-
   cursor: pointer;
-
   border: 1px solid var(--border-color);
-
 }
-
 .inline-gallery img:hover {
-
   opacity: 0.85;
-
 }
-
 .inline-gallery img:first-of-type {
-
   display: block;                /* первая картинка всегда видна */
-
 }
 
 .inline-gallery .gallery-nav {
-
   position: absolute;
-
   bottom: 5px;
-
   left: 0;
-
   width: 100%;
-
   display: flex;
-
   justify-content: space-between;
-
   pointer-events: none;
-
 }
-
 .inline-gallery button {
-
   pointer-events: all;
-
   background: rgba(0,0,0,0.2);
-
   color: white;
-
   border: none;
-
   font-size: 22px;
-
   padding: 5px 10px;
-
   cursor: pointer;
-
 }
-
 .inline-gallery button:hover {
-
   background: rgba(0,0,0,0.35);
-
 }
 
 /* адаптация под мобилки */
-
 @media (max-width: 768px) {
-
   .inline-gallery {
-
     float: none;
-
     width: 100%;
-
     margin: 0 0 1.5em 0;
-
     clear: both;
-
   }
-
   .inline-gallery + p,
-
   p + .inline-gallery {
-
     margin-top: 1.5em;
-
   }
-
 }
-
