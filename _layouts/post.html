@@ -4,53 +4,51 @@ layout: default
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Находим все абзацы статьи
   const articleContent = document.querySelector(".article-content");
   if (!articleContent) return;
 
-  // Ищем группы ссылок на картинки
   const mdImageRegex = /(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|md\.jpg))/gi;
 
   articleContent.innerHTML = articleContent.innerHTML.replace(
     /(<p>.*?<\/p>)/gs,
     block => {
       let images = [...block.matchAll(mdImageRegex)];
-      if (images.length < 2) return block; // галерея только при 2+ изображениях
+      if (images.length < 2) return block;
 
       let galleryId = "gallery_" + Math.random().toString(36).substr(2, 9);
 
-      // FIX: добавлен фикс-контейнер, который держит галерею как отдельный блок
       let galleryHTML = `
-        <div class="gallery-fix-wrapper">
-          <div class="inline-gallery" data-gallery="${galleryId}">
-            <div class="gallery-images">
-              ${images
-                .map(
-                  (m, i) =>
-                    `<img src="${m[1]}" data-index="${i}" loading="lazy">`
-                )
-                .join("")}
-            </div>
-            <div class="gallery-nav">
-              <button class="prev">‹</button>
-              <button class="next">›</button>
-            </div>
+        <div class="inline-gallery" data-gallery="${galleryId}">
+          <div class="gallery-images">
+            ${images
+              .map(
+                (m, i) =>
+                  `<img src="${m[1]}" data-index="${i}" loading="lazy">`
+              )
+              .join("")}
+          </div>
+          <div class="gallery-nav">
+            <button class="prev">‹</button>
+            <button class="next">›</button>
           </div>
         </div>
       `;
 
-      // удаляем ссылки из текста абзаца
       let cleaned = block.replace(mdImageRegex, "");
 
-      // вставляем галерею перед текстом
-      return galleryHTML + cleaned;
+      return `
+        <div class="gallery-block">
+          ${galleryHTML}
+          ${cleaned}
+        </div>
+      `;
     }
   );
 
-  // логика листания
   document.querySelectorAll(".inline-gallery").forEach(gallery => {
     let imgs = gallery.querySelectorAll("img");
     let index = 0;
+
     const show = i => {
       imgs.forEach((img, n) => {
         img.style.display = n === i ? "block" : "none";
@@ -67,13 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
       show(index);
     };
 
-    // открытие в лайтбоксе
     imgs.forEach((img, i) => {
       img.onclick = () => openLightbox(imgs, i);
     });
   });
 
-  // лайтбокс
   function openLightbox(images, index) {
     const lb = document.createElement("div");
     lb.className = "lightbox";
@@ -105,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
+
 
 
 
