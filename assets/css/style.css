@@ -540,8 +540,62 @@ body {
   .article-text h2 { font-size:20px; }
   .toc { min-width:100%; max-width:100%; display:block; }
 }
-/* ===== Оптимизация производительности ===== */
+/* ===== Оптимизация производительности.inline-gallery {
+  float: left;
+  width: 250px;
+  margin: 0 15px 15px 0;
+  border: 1px solid var(--border-color);
+  background: var(--infobox-bg);
+  padding: 5px;
+  position: relative;
+}
+
+.inline-gallery img {
+  width: 100%;
+  display: none;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+}
+
+.inline-gallery img:hover {
+  opacity: 0.85;
+}
+
+.inline-gallery .gallery-nav {
+  position: absolute;
+  bottom: 5px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.inline-gallery button {
+  pointer-events: all;
+  background: rgba(0,0,0,0.2);
+  color: white;
+  border: none;
+  font-size: 22px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.inline-gallery button:hover {
+  background: rgba(0,0,0,0.35);
+}
+
+/* адаптация */
+@media (max-width: 768px) {
+  .inline-gallery {
+    float: none;
+    width: 100%;
+    margin: 0 0 15px 0;
+  }
+}
+ ===== */
 img[loading="lazy"] { opacity:0; transition: opacity 0.3s; }
 img[loading="lazy"].loaded, img[loading="lazy"]:not([src]) { opacity:1; }
 /* ===== Плавная прокрутка ===== */
 html { scroll-behavior: smooth; }
+
+
