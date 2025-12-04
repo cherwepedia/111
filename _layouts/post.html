@@ -19,20 +19,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let galleryId = "gallery_" + Math.random().toString(36).substr(2, 9);
 
-      // создаём HTML-галерею
+      // FIX: добавлен фикс-контейнер, который держит галерею как отдельный блок
       let galleryHTML = `
-        <div class="inline-gallery" data-gallery="${galleryId}">
-          <div class="gallery-images">
-            ${images
-              .map(
-                (m, i) =>
-                  `<img src="${m[1]}" data-index="${i}" loading="lazy">`
-              )
-              .join("")}
-          </div>
-          <div class="gallery-nav">
-            <button class="prev">‹</button>
-            <button class="next">›</button>
+        <div class="gallery-fix-wrapper">
+          <div class="inline-gallery" data-gallery="${galleryId}">
+            <div class="gallery-images">
+              ${images
+                .map(
+                  (m, i) =>
+                    `<img src="${m[1]}" data-index="${i}" loading="lazy">`
+                )
+                .join("")}
+            </div>
+            <div class="gallery-nav">
+              <button class="prev">‹</button>
+              <button class="next">›</button>
+            </div>
           </div>
         </div>
       `;
@@ -152,11 +154,10 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="toc-toggle" id="tocToggle">показать</span>
       </div>
       <div class="toc-content" id="tocContent" style="display: none;">
-        <!-- Генерируется JS -->
       </div>
     </div>
 
-    <!-- Основной текст статьи, первый абзац исключён из TOC -->
+    <!-- Основной текст статьи -->
     <div class="article-text">
       {% assign paragraphs = content | split: '\n\n' %}
       {% assign first_paragraph = paragraphs[0] %}
@@ -191,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 </article>
 
-<!-- Lightbox модальное окно -->
+<!-- Lightbox -->
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
   <span class="lightbox-close">&times;</span>
   <img class="lightbox-content" id="lightboxImage">
@@ -216,11 +217,10 @@ document.addEventListener('DOMContentLoaded', function() {
   processContentImages();
 });
 
-// TOC: игнорируем первый абзац
+// TOC
 function generateTOC() {
   const content = document.querySelector('.article-text');
   const headings = Array.from(content.querySelectorAll('h2, h3'));
-  // исключаем первый блок (если нужен, можно более умно)
   if (headings.length === 0) {
     document.querySelector('.toc').style.display = 'none';
     return;
