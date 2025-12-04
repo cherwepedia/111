@@ -467,23 +467,16 @@ body {
 }
 
 /* ФИКС-КОНТЕЙНЕР — делает так, чтобы абзац ВСЕГДА уходил вниз */
-.gallery-block {
-  overflow: hidden;      /* создаёт BFC, float не торчит */
-  margin-bottom: 20px;   /* расстояние между галереями */
-}
-
-/* Галерея слева */
 .inline-gallery {
   float: left;
   width: 250px;
-  margin: 0 15px 10px 0; /* справа + нижний отступ от абзаца */
-  background: var(--infobox-bg);
+  margin: 0 15px 10px 0; /* ← нижний отступ, чтобы следующее p не поднималось */
   border: 1px solid var(--border-color);
+  background: var(--infobox-bg);
   padding: 5px;
   position: relative;
 }
 
-/* Картинки */
 .inline-gallery img {
   width: 100%;
   display: none;
@@ -491,7 +484,6 @@ body {
   border: 1px solid var(--border-color);
 }
 
-/* Навигация галереи */
 .inline-gallery .gallery-nav {
   position: absolute;
   bottom: 5px;
@@ -515,19 +507,16 @@ body {
 .lightbox {
   display: none;
   position: fixed;
-  z-index: 9999;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
+  inset: 0;
   background: rgba(0,0,0,0.8);
   justify-content: center;
   align-items: center;
+  z-index: 9999;
 }
-
 .lightbox-content {
   max-width: 90%;
   max-height: 90%;
 }
-
 .lightbox-close {
   position: absolute;
   top: 20px;
@@ -536,14 +525,12 @@ body {
   color: white;
   cursor: pointer;
 }
-
 .lightbox-nav {
   position: absolute;
   bottom: 40px;
   display: flex;
   gap: 25px;
 }
-
 .lightbox-nav button {
   background: rgba(255,255,255,0.2);
   border: none;
@@ -560,9 +547,4 @@ body {
     width: 100%;
     margin: 0 0 15px 0;
   }
-
-  .gallery-block {
-    overflow: visible;
-  }
 }
-
