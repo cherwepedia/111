@@ -547,8 +547,6 @@ img[loading="lazy"].loaded, img[loading="lazy"]:not([src]) { opacity:1; }
 html { scroll-behavior: smooth; }
 
 
-
-
 /* Контейнер, который содержит галерею и текст — формирует BFC, поэтому следующий блок начнётся под ним */
 .gallery-block {
   overflow: auto;        /* создаёт BFC и "включает" float внутрь контейнера */
