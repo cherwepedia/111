@@ -2,6 +2,8 @@
 layout: default
 ---
 
+
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -20,20 +22,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let galleryId = "gallery_" + Math.random().toString(36).substr(2, 9);
 
-      // создаём HTML-галерею
+      // создаём HTML-галерею с обёрткой
       let galleryHTML = `
-        <div class="inline-gallery" data-gallery="${galleryId}">
-          <div class="gallery-images">
-            ${images
-              .map(
-                (m, i) =>
-                  `<img src="${m[1]}" data-index="${i}" loading="lazy">`
-              )
-              .join("")}
-          </div>
-          <div class="gallery-nav">
-            <button class="prev">‹</button>
-            <button class="next">›</button>
+        <div class="inline-gallery-wrapper">
+          <div class="inline-gallery" data-gallery="${galleryId}">
+            <div class="gallery-images">
+              ${images
+                .map((m, i) => `<img src="${m[1]}" data-index="${i}" loading="lazy">`)
+                .join("")}
+            </div>
+            <div class="gallery-nav">
+              <button class="prev">‹</button>
+              <button class="next">›</button>
+            </div>
           </div>
         </div>
       `;
@@ -104,7 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
-
 
 
 <!-- Yandex.Metrika counter -->
