@@ -557,10 +557,9 @@ html { scroll-behavior: smooth; }
   position: relative;
 }
 
-/* следующая галерея после предыдущей начинается под ней */
-.inline-gallery + .inline-gallery {
-  clear: left;
-  margin-top: 15px; /* можно регулировать расстояние между галереями */
+.inline-gallery-wrapper {
+  clear: left; /* каждая галерея под предыдущей */
+  margin-bottom: 15px; /* расстояние между галереями */
 }
 
 .inline-gallery img {
@@ -604,4 +603,9 @@ html { scroll-behavior: smooth; }
     width: 100%;
     margin: 0 0 15px 0;
   }
+  .inline-gallery-wrapper {
+    clear: none; /* на мобильных можно убрать clear */
+    margin-bottom: 15px;
+  }
 }
+
