@@ -549,9 +549,24 @@ html { scroll-behavior: smooth; }
 
 
 /* Контейнер, который содержит галерею и текст — формирует BFC, поэтому следующий блок начнётся под ним */
-.gallery-block + p {
+/* Правильное поведение: контейнер включает float и следующий абзац уходит вниз */
+.gallery-block {
+  display: flow-root;
+  overflow: auto;
+  margin-bottom: 18px;
   clear: both;
 }
+
+.gallery-block::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.gallery-block + * {
+  clear: both;
+}
+
 
 /* Плавающая галерея слева */
 .inline-gallery {
