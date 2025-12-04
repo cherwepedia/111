@@ -1,73 +1,250 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
+---
+layout: default
+---
 
-  <!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105469789', 'ym');
-
-    ym(105469789, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/105469789" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+<article class="article">
+  <h1 class="article-title">{{ page.title }}</h1>
   
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ page.title }} — {{ site.title }}</title>
-  <meta name="description" content="{{ site.description }}">
+  <div class="article-content">
+    <!-- Инфобокс -->
+    {% if page.infobox or page.image %}
+    <aside class="infobox">
+      {% if page.image %}
+      <div class="infobox-image">
+        <img src="{{ page.image }}" alt="{{ page.title }}" loading="lazy">
+      </div>
+      {% endif %}
+      {% if page.infobox %}
+      <table class="infobox-table">
+        {% for item in page.infobox %}
+        <tr>
+          <th>{{ item.label }}</th>
+          <td>{{ item.value }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% endif %}
+    </aside>
+    {% endif %}
 
-  <!-- CSS из CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
-
-  <!-- Font из CDN -->
-  <link href="https://fonts.googleapis.com/css2?family=Linux+Libertine&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-</head>
-<body>
-  <!-- Мобильное меню overlay -->
-  <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
-
-  <!-- Верхняя шапка (только мобильная) -->
-  <div class="mobile-header">
-    <button class="menu-toggle" onclick="toggleMobileMenu()">☰</button>
-    <div class="mobile-search">
-      <input type="text" id="mobileSearchInput" placeholder="Поиск статей..." onkeyup="performSearch(this.value)">
-    </div>
-  </div>
-
-  <!-- Боковая панель -->
-  <aside class="sidebar" id="sidebar">
-    {% include sidebar.html %}
-  </aside>
-
-  <!-- Основной контент -->
-  <div class="main-wrapper">
-    <!-- Поиск (десктоп) -->
-    <div class="desktop-search">
-      <input type="text" id="desktopSearchInput" placeholder="Поиск статей..." onkeyup="performSearch(this.value)">
+    <!-- Оглавление -->
+    <div class="toc">
+      <div class="toc-header" onclick="toggleTOC()">
+        <strong>Содержание</strong>
+        <span class="toc-toggle" id="tocToggle">показать</span>
+      </div>
+      <div class="toc-content" id="tocContent" style="display: none;"></div>
     </div>
 
-    <!-- Результаты поиска -->
-    <div id="searchResults" class="search-results" style="display: none;"></div>
+    <!-- Основной текст статьи -->
+    <div class="article-text">
+      {% assign paragraphs = content | split: '\n\n' %}
+      {% assign first_paragraph = paragraphs[0] %}
+      <p>{{ first_paragraph | markdownify }}</p>
+      {% assign rest_paragraphs = paragraphs | slice: 1, 999 %}
+      {{ rest_paragraphs | join: '\n\n' | markdownify }}
+    </div>
 
-    <!-- Контент страницы -->
-    <main class="content">
-      {{ content }}
-    </main>
+    <!-- Галерея в конце статьи -->
+    {% if page.gallery %}
+    <div class="gallery-section">
+      <h2>Галерея</h2>
+      <div class="gallery-grid">
+        {% for image in page.gallery %}
+        <div class="gallery-item">
+          <img src="{{ image }}" alt="Галерея {{ forloop.index }}" loading="lazy">
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Категории -->
+    {% if page.categories %}
+    <div class="article-categories">
+      <strong>Категории:</strong>
+      {% for category in page.categories %}
+      <a href="{{ '/categories/#' | append: category | downcase | relative_url }}" class="category-tag">{{ category }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
   </div>
+</article>
 
-  <!-- JavaScript для поиска и навигации -->
-  <script src="{{ '/assets/js/search.js' | relative_url }}"></script>
-  <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
-</body>
-</html>
+<!-- Единый лайтбокс -->
+<div id="lightbox" class="lightbox">
+  <span class="lightbox-close">×</span>
+  <img class="lightbox-content" id="lightboxImg">
+  <div class="lightbox-nav">
+    <button class="lb-prev">‹</button>
+    <button class="lb-next">›</button>
+  </div>
+  <div class="lightbox-counter" id="lightboxCounter"></div>
+</div>
+
+<script>
+// Глобальные переменные лайтбокса
+let lightboxImages = [];
+let lightboxIndex = 0;
+
+document.addEventListener("DOMContentLoaded", () => {
+  generateTOC();
+  createInlineGalleries();     // ← ИСПРАВЛЕНО: теперь отступы идеальные
+  initAllImagesForLightbox();
+  initMainGallery();
+});
+
+/* === 1. Оглавление === */
+function generateTOC() {
+  const headings = document.querySelectorAll('.article-text h2, .article-text h3');
+  if (headings.length === 0) {
+    document.querySelector('.toc').style.display = 'none';
+    return;
+  }
+  let html = '<ol>';
+  headings.forEach((h, i) => {
+    const id = 'heading-' + i;
+    h.id = id;
+    const level = h.tagName === 'H2' ? 'toc-level-1' : 'toc-level-2';
+    html += `<li class="${level}"><a href="#${id}">${h.textContent.trim()}</a></li>`;
+  });
+  html += '</ol>';
+  document.getElementById('tocContent').innerHTML = html;
+}
+
+function toggleTOC() {
+  const content = document.getElementById('tocContent');
+  const toggle = document.getElementById('tocToggle');
+  if (!content.style.display || content.style.display === 'none') {
+    content.style.display = 'block';
+    toggle.textContent = 'скрыть';
+  } else {
+    content.style.display = 'none';
+    toggle.textContent = 'показать';
+  }
+}
+
+/* === 2. ИСПРАВЛЕННЫЕ INLINE-ГАЛЕРЕИ (главное изменение) === */
+function createInlineGalleries() {
+  const regex = /(https?:\/\/[^\s"']+\.(jpg|jpeg|png|gif|webp)(?=[\s"']|$))/gi;
+
+  document.querySelectorAll('.article-text p').forEach(p => {
+    const matches = [...p.innerHTML.matchAll(regex)];
+    if (matches.length < 2) return;
+
+    // Создаём контейнер галереи
+    const gallery = document.createElement('div');
+    gallery.className = 'inline-gallery';
+
+    const imagesDiv = document.createElement('div');
+    imagesDiv.className = 'gallery-images';
+
+    const nav = document.createElement('div');
+    nav.className = 'gallery-nav';
+    nav.innerHTML = `<button class="prev">‹</button><span class="counter">1 / ${matches.length}</span><button class="next">›</button>`;
+
+    const urls = [];
+
+    matches.forEach((match, i) => {
+      const url = match[0];
+      urls.push(url);
+
+      const img = document.createElement('img');
+      img.src = url;
+      img.loading = 'lazy';
+      img.dataset.index = i;
+      img.style.display = i === 0 ? 'block' : 'none';
+      imagesDiv.appendChild(img);
+
+      // Удаляем ссылку из текста абзаца
+      p.innerHTML = p.innerHTML.replace(url, '');
+    });
+
+    gallery.appendChild(imagesDiv);
+    gallery.appendChild(nav);
+
+    // ВАЖНО: вставляем галерею ПЕРЕД абзацем → отступы остаются как у обычных <p>
+    p.parentNode.insertBefore(gallery, p);
+
+    // Навигация
+    let current = 0;
+    const imgs = imagesDiv.querySelectorAll('img');
+    const counter = nav.querySelector('.counter');
+
+    const show = i => {
+      imgs.forEach((img, idx) => img.style.display = idx === i ? 'block' : 'none');
+      counter.textContent = `${i + 1} / ${imgs.length}`;
+      current = i;
+    };
+
+    nav.querySelector('.prev').onclick = () => show((current - 1 + imgs.length) % imgs.length);
+    nav.querySelector('.next').onclick = () => show((current + 1) % imgs.length);
+
+    // Открытие в лайтбокс
+    imgs.forEach((img, i) => {
+      img.onclick = () => openLightbox(urls, i);
+    });
+  });
+}
+
+/* === 3. Инициализация всех картинок для лайтбокса === */
+function initAllImagesForLightbox() {
+  const allImages = [...document.querySelectorAll('.article-text img, .gallery-grid img, .infobox-image img')];
+  allImages.forEach(img => {
+    if (img.closest('.inline-gallery')) return; // уже обработаны выше
+    img.style.cursor = 'pointer';
+    img.onclick = () => {
+      const collection = allImages.map(i => i.src);
+      const index = collection.indexOf(img.src);
+      openLightbox(collection, index);
+    };
+  });
+}
+
+function initMainGallery() {
+  document.querySelectorAll('.gallery-grid img').forEach(img => {
+    img.style.cursor = 'pointer';
+    img.onclick = () => {
+      const imgs = [...document.querySelectorAll('.gallery-grid img')];
+      const collection = imgs.map(i => i.src);
+      const index = imgs.indexOf(img);
+      openLightbox(collection, index);
+    };
+  });
+}
+
+/* === 4. Лайтбокс === */
+function openLightbox(images, index) {
+  lightboxImages = images;
+  lightboxIndex = index;
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImg');
+  const counter = document.getElementById('lightboxCounter');
+
+  img.src = images[index];
+  counter.textContent = `${index + 1} / ${images.length}`;
+  lb.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.querySelector('.lightbox-close').onclick = closeLightbox;
+document.querySelector('.lb-prev').onclick = () => {
+  lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
+  openLightbox(lightboxImages, lightboxIndex);
+};
+document.querySelector('.lb-next').onclick = () => {
+  lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
+  openLightbox(lightboxImages, lightboxIndex);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') document.querySelector('.lb-prev').click();
+  if (e.key === 'ArrowRight') document.querySelector('.lb-next').click();
+});
+</script>
