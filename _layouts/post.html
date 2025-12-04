@@ -3,51 +3,44 @@ layout: default
 ---
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-
-  // Находим все абзацы статьи
   const articleContent = document.querySelector(".article-content");
   if (!articleContent) return;
 
-  // Ищем группы ссылок на картинки
-  const mdImageRegex = /(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|md\.jpg))/gi;
+  const mdImageRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|md\.jpg))/gi;
 
+  // Преобразуем подряд идущие ссылки на изображения внутри одного <p> в контейнер с галереей + текст
   articleContent.innerHTML = articleContent.innerHTML.replace(
     /(<p>.*?<\/p>)/gs,
     block => {
-      let images = [...block.matchAll(mdImageRegex)];
+      const images = [...block.matchAll(mdImageRegex)];
       if (images.length < 2) return block; // галерея только при 2+ изображениях
 
-      let galleryId = "gallery_" + Math.random().toString(36).substr(2, 9);
+      const galleryId = "gallery_" + Math.random().toString(36).substr(2, 9);
 
-      // создаём HTML-галерею
-      let galleryHTML = `
+      // HTML галереи (плавающий блок слева)
+      const galleryHTML = `
         <div class="inline-gallery" data-gallery="${galleryId}">
           <div class="gallery-images">
-            ${images
-              .map(
-                (m, i) =>
-                  `<img src="${m[1]}" data-index="${i}" loading="lazy">`
-              )
-              .join("")}
+            ${images.map((m, i) => `<img src="${m[1]}" data-index="${i}" loading="lazy" alt="">`).join("")}
           </div>
           <div class="gallery-nav">
-            <button class="prev">‹</button>
-            <button class="next">›</button>
+            <button class="prev" aria-label="previous image">‹</button>
+            <button class="next" aria-label="next image">›</button>
           </div>
         </div>
       `;
 
-      // удаляем ссылки из текста абзаца
-      let cleaned = block.replace(mdImageRegex, "");
+      // очищаем текст абзаца от ссылок на картинки
+      const cleaned = block.replace(mdImageRegex, "").replace(/<p>\s*<\/p>/g, "");
 
-      // вставляем галерею перед текстом
-      return galleryHTML + cleaned;
+      // Оборачиваем в контейнер .gallery-block чтобы он содержал float (BFC via overflow)
+      return `<div class="gallery-block">${galleryHTML}<div class="gallery-text">${cleaned.replace(/^<p>/, '').replace(/<\/p>$/, '')}</div></div>`;
     }
   );
 
-  // логика листания
+  // Инициализация галерей
   document.querySelectorAll(".inline-gallery").forEach(gallery => {
-    let imgs = gallery.querySelectorAll("img");
+    const imgs = gallery.querySelectorAll("img");
     let index = 0;
     const show = i => {
       imgs.forEach((img, n) => {
@@ -65,44 +58,61 @@ document.addEventListener("DOMContentLoaded", () => {
       show(index);
     };
 
-    // открытие в лайтбоксе
+    // открытие лайтбокса
     imgs.forEach((img, i) => {
-      img.onclick = () => openLightbox(imgs, i);
+      img.onclick = () => openLightbox(Array.from(imgs).map(x => x.src), i);
     });
   });
 
-  // лайтбокс
-  function openLightbox(images, index) {
+  // простой лайтбокс (переиспользуем)
+  function openLightbox(srcList, index) {
+    // если уже есть — удалим предыдущий
+    const existing = document.querySelector(".js-popup-lightbox");
+    if (existing) existing.remove();
+
     const lb = document.createElement("div");
-    lb.className = "lightbox";
+    lb.className = "js-popup-lightbox lightbox js-popup";
     lb.innerHTML = `
-      <span class="lightbox-close">&times;</span>
-      <img class="lightbox-content">
+      <span class="lightbox-close" role="button" aria-label="close">&times;</span>
+      <img class="lightbox-content" src="${srcList[index]}" alt="">
       <div class="lightbox-nav">
-        <button class="lb-prev">‹</button>
-        <button class="lb-next">›</button>
+        <button class="lb-prev" aria-label="prev">‹</button>
+        <button class="lb-next" aria-label="next">›</button>
       </div>
     `;
     document.body.appendChild(lb);
+    document.body.style.overflow = 'hidden';
 
     const content = lb.querySelector(".lightbox-content");
-    const show = i => content.src = images[i].src;
-    show(index);
+    const show = i => { content.src = srcList[i]; };
 
-    lb.querySelector(".lightbox-close").onclick = () => lb.remove();
+    lb.querySelector(".lightbox-close").onclick = () => {
+      lb.remove();
+      document.body.style.overflow = 'auto';
+    };
     lb.querySelector(".lb-prev").onclick = () => {
-      index = (index - 1 + images.length) % images.length;
+      index = (index - 1 + srcList.length) % srcList.length;
       show(index);
     };
     lb.querySelector(".lb-next").onclick = () => {
-      index = (index + 1) % images.length;
+      index = (index + 1) % srcList.length;
       show(index);
     };
 
-    lb.style.display = "flex";
+    lb.addEventListener('click', (e) => {
+      if (e.target === lb) { lb.remove(); document.body.style.overflow = 'auto'; }
+    });
+
+    document.addEventListener('keydown', function onKey(e) {
+      if (!document.body.contains(lb)) { document.removeEventListener('keydown', onKey); return; }
+      if (e.key === 'Escape') { lb.remove(); document.body.style.overflow = 'auto'; }
+      if (e.key === 'ArrowLeft') { index = (index - 1 + srcList.length) % srcList.length; show(index); }
+      if (e.key === 'ArrowRight') { index = (index + 1) % srcList.length; show(index); }
+    });
   }
 });
 </script>
+
 
 
 <!-- Yandex.Metrika counter -->
