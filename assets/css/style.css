@@ -547,67 +547,53 @@ img[loading="lazy"].loaded, img[loading="lazy"]:not([src]) { opacity:1; }
 html { scroll-behavior: smooth; }
 
 
-.inline-gallery {
+/* ===== Встроенные мини-галереи (альбомы слева, как в Википедии) ===== */
+.inline-album {
   float: left;
-  width: 250px;
-  margin: 0 15px 1.5em 0;        /* увеличил нижний отступ — это главное */
-  border: 1px solid var(--border-color);
+  width: 280px;
+  margin: 8px 18px 15px 0;
   background: var(--infobox-bg);
-  padding: 5px;
-  position: relative;
-  clear: left;                   /* ← заставляет каждую новую галерею начинаться с новой строки */
+  border: 1px solid var(--border-color);
+  padding: 8px;
+  clear: left;
 }
 
-.inline-gallery + p,
-p + .inline-gallery {
-  margin-top: 1.5em;             /* одинаковый отступ сверху и снизу, как у обычных абзацев */
+.inline-album-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
-.inline-gallery img {
-  width: 100%;
-  display: none;
+.inline-album-item {
+  aspect-ratio: 1;
+  overflow: hidden;
   cursor: pointer;
   border: 1px solid var(--border-color);
-}
-.inline-gallery img:hover {
-  opacity: 0.85;
-}
-.inline-gallery img:first-of-type {
-  display: block;                /* первая картинка всегда видна */
+  background: white;
 }
 
-.inline-gallery .gallery-nav {
-  position: absolute;
-  bottom: 5px;
-  left: 0;
+.inline-album-item img {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  pointer-events: none;
-}
-.inline-gallery button {
-  pointer-events: all;
-  background: rgba(0,0,0,0.2);
-  color: white;
-  border: none;
-  font-size: 22px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-.inline-gallery button:hover {
-  background: rgba(0,0,0,0.35);
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s, opacity 0.2s;
 }
 
-/* адаптация под мобилки */
-@media (max-width: 768px) {
-  .inline-gallery {
-    float: none;
-    width: 100%;
-    margin: 0 0 1.5em 0;
-    clear: both;
-  }
-  .inline-gallery + p,
-  p + .inline-gallery {
-    margin-top: 1.5em;
-  }
+.inline-album-item:hover img {
+  transform: scale(1.08);
+  opacity: 0.9;
+}
+
+.inline-album-caption {
+  font-size: 13px;
+  text-align: center;
+  color: #54595d;
+  padding: 6px 4px 0;
+  line-height: 1.3;
+}
+
+/* Принудительно очищаем обтекание после альбома, если нужно */
+.clear-after-album {
+  clear: both;
 }
