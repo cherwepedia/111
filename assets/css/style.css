@@ -557,6 +557,12 @@ html { scroll-behavior: smooth; }
   position: relative;
 }
 
+/* следующая галерея после предыдущей начинается под ней */
+.inline-gallery + .inline-gallery {
+  clear: left;
+  margin-top: 15px; /* можно регулировать расстояние между галереями */
+}
+
 .inline-gallery img {
   width: 100%;
   display: none;
@@ -591,7 +597,7 @@ html { scroll-behavior: smooth; }
   background: rgba(0,0,0,0.35);
 }
 
-/* адаптация */
+/* адаптация для мобильных */
 @media (max-width: 768px) {
   .inline-gallery {
     float: none;
