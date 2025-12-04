@@ -546,11 +546,10 @@ img[loading="lazy"].loaded, img[loading="lazy"]:not([src]) { opacity:1; }
 /* ===== Плавная прокрутка ===== */
 html { scroll-behavior: smooth; }
 
-
 .inline-gallery {
   float: left;
   width: 250px;
-  margin: 0 15px 15px 0;
+  margin: 0 15px 15px 0; /* нижний отступ для обтекания текста */
   border: 1px solid var(--border-color);
   background: var(--infobox-bg);
   padding: 5px;
@@ -558,8 +557,8 @@ html { scroll-behavior: smooth; }
 }
 
 .inline-gallery-wrapper {
-  clear: left; /* каждая галерея под предыдущей */
-  margin-bottom: 15px; /* расстояние между галереями */
+  /* убираем clear: left, чтобы сохранить обтекание */
+  margin-bottom: 1em; /* симметричный вертикальный отступ между галереями */
 }
 
 .inline-gallery img {
@@ -604,8 +603,8 @@ html { scroll-behavior: smooth; }
     margin: 0 0 15px 0;
   }
   .inline-gallery-wrapper {
-    clear: none; /* на мобильных можно убрать clear */
-    margin-bottom: 15px;
+    margin-bottom: 15px; /* вертикальный отступ между галереями */
   }
 }
+
 
