@@ -4,8 +4,8 @@ description: "Энциклопедия черветреда"
 # ВАЖНО: Измените эти значения на свои!
 # baseurl - название вашего репозитория (например, /chervepedia)
 # url - ваш GitHub Pages домен
-baseurl: "/"
-url: "https://cherwepedia.github.io"
+baseurl: "/111/"
+url: ""
 
 # Jekyll настройки
 markdown: kramdown
