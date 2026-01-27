@@ -20,20 +20,34 @@ permalink: /categories/
             <span class="category-icon">{{ category.icon }}</span>
             <div>
               <h2 class="category-name">{{ category.name }}</h2>
-              <p class="category-description">{{ category.description }} ({{ cat_posts.size }})</p>
+              <p class="category-description">
+                {{ category.description }} ({{ cat_posts.size }})
+              </p>
             </div>
           </div>
           <span class="category-toggle">▼</span>
         </div>
+
         <div class="category-articles">
           {% for post in cat_posts %}
           <a href="{{ post.url | relative_url }}" class="category-article">
             {% if post.infobox.image %}
-            <img src="{{ post.infobox.image | relative_url }}" alt="{{ post.title }}" class="category-article-image">
+            <img
+              src="{{ post.infobox.image | relative_url }}"
+              alt="{{ post.title }}"
+              class="category-article-image">
             {% endif %}
+
             <div class="category-article-content">
               <h3 class="category-article-title">{{ post.title }}</h3>
-              <p class="category-article-excerpt">{{ post.intro | truncate: 150 }}</p>
+
+              <p class="category-article-excerpt">
+                {{ post.intro
+                  | truncate: 150
+                  | markdownify
+                  | remove: '<p>'
+                  | remove: '</p>' }}
+              </p>
             </div>
           </a>
           {% endfor %}
@@ -51,8 +65,8 @@ permalink: /categories/
   {
     "title": {{ post.title | jsonify }},
     "url": {{ post.url | relative_url | jsonify }},
-    "intro": {{ post.intro | default: "" | jsonify }},
-    "content": {{ post.content | strip_html | truncate: 500 | jsonify }},
+    "intro": {{ post.intro | default: "" | strip_newlines | jsonify }},
+    "content": {{ post.content | strip_html | truncate: 500 | strip_newlines | jsonify }},
     "image": {{ post.infobox.image | default: "" | relative_url | jsonify }},
     "categories": {{ post.categories | jsonify }}
   }{% unless forloop.last %},{% endunless %}
