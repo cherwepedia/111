@@ -1,0 +1,12 @@
+{
+  "name": "chervepedia",
+  "version": "1.0.0",
+  "description": "Червепедия — Энциклопедия Черветреда",
+  "scripts": {
+    "dev": "bunx serve _site -l 3000",
+    "build": "jekyll build",
+    "serve": "jekyll serve --host 0.0.0.0 --port 3000"
+  },
+  "keywords": ["wiki", "jekyll", "encyclopedia"],
+  "license": "MIT"
+}

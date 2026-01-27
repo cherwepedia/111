@@ -1,0 +1,95 @@
+---
+layout: default
+title: Главная
+---
+
+<div class="container">
+  <!-- Hero Section -->
+  <section class="home-hero">
+    <h1 class="home-title">Червепедия — Энциклопедия Черветреда</h1>
+    <p class="home-subtitle">
+      Добро пожаловать в Червепедию — самую полную энциклопедию о мире Черветреда.
+      Здесь собраны статьи о людях, событиях, истоках и политике этого удивительного мира.
+    </p>
+
+    {% include search.html %}
+
+    <div class="home-actions">
+      <button class="btn nav-random" id="random-btn">
+        <span>Случайная статья</span>
+      </button>
+      <a href="{{ '/categories/' | relative_url }}" class="btn">
+        <span>Все категории</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Favorites Carousel -->
+  {% assign favorites = site.posts | where: "favorites", true %}
+  {% if favorites.size > 0 %}
+  <section class="home-section">
+    <header class="section-header">
+      <h2 class="section-title">Избранные статьи</h2>
+    </header>
+    <div class="favorites-carousel">
+      <div class="favorites-track">
+        {% for post in favorites limit: 10 %}
+        <a href="{{ post.url | relative_url }}" class="favorite-card">
+          {% if post.infobox.image %}
+          <img src="{{ post.infobox.image | relative_url }}" alt="{{ post.title }}" class="favorite-image">
+          {% else %}
+          <div class="favorite-image" style="background: #eee;"></div>
+          {% endif %}
+          <div class="favorite-content">
+            <h3 class="favorite-title">{{ post.title }}</h3>
+            <p class="favorite-excerpt">{{ post.intro | truncate: 100 }}</p>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Latest Articles -->
+  <section class="home-section">
+    <header class="section-header">
+      <h2 class="section-title">Последние статьи</h2>
+      <a href="{{ '/categories/' | relative_url }}" class="section-link">Все статьи →</a>
+    </header>
+    <div class="latest-list">
+      {% for post in site.posts limit: 5 %}
+      <a href="{{ post.url | relative_url }}" class="latest-item">
+        {% if post.infobox.image %}
+        <img src="{{ post.infobox.image | relative_url }}" alt="{{ post.title }}" class="latest-image">
+        {% endif %}
+        <div class="latest-content">
+          <h3 class="latest-title">{{ post.title }}</h3>
+          <p class="latest-excerpt">{{ post.intro | truncate: 150 }}</p>
+          <div class="latest-meta">
+            {% assign cat = post.categories | first %}
+            {% assign category_data = site.data.categories | where: "id", cat | first %}
+            {{ category_data.name | default: cat }}
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<!-- Search Data for JavaScript -->
+<script type="application/json" id="search-data">
+[
+  {% for post in site.posts %}
+  {
+    "title": {{ post.title | jsonify }},
+    "url": {{ post.url | relative_url | jsonify }},
+    "intro": {{ post.intro | default: "" | jsonify }},
+    "content": {{ post.content | strip_html | truncate: 500 | jsonify }},
+    "image": {{ post.infobox.image | default: "" | relative_url | jsonify }},
+    "categories": {{ post.categories | jsonify }}
+  }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+]
+</script>

@@ -1,0 +1,26 @@
+<header class="site-header">
+  <div class="container">
+    <a href="{{ '/' | relative_url }}" class="site-logo">
+      <span class="logo-icon">🪱</span>
+      <span class="logo-text">Червепедия</span>
+    </a>
+
+    <nav class="site-nav">
+      <a href="{{ '/' | relative_url }}" class="nav-link">Главная</a>
+      <a href="{{ '/categories/' | relative_url }}" class="nav-link">Категории</a>
+      <button class="nav-link nav-random" id="random-article">Случайная</button>
+    </nav>
+
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Меню">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+  <nav class="mobile-nav" id="mobile-nav">
+    <a href="{{ '/' | relative_url }}" class="mobile-nav-link">Главная</a>
+    <a href="{{ '/categories/' | relative_url }}" class="mobile-nav-link">Категории</a>
+    <button class="mobile-nav-link nav-random">Случайная статья</button>
+  </nav>
+</header>

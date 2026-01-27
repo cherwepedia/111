@@ -1,0 +1,26 @@
+{% comment %}
+Usage: {% include carousel.html images="img1.jpg,img2.jpg" captions="Caption 1,Caption 2" %}
+{% endcomment %}
+{% assign images = include.images | split: "," %}
+{% assign captions = include.captions | split: "," %}
+<figure class="article-carousel">
+  <div class="carousel-container">
+    <div class="carousel-track">
+      {% for img in images %}
+      <div class="carousel-slide">
+        <img src="{{ img | strip | relative_url }}" alt="{{ captions[forloop.index0] }}" data-lightbox>
+      </div>
+      {% endfor %}
+    </div>
+    <button class="carousel-btn carousel-prev" aria-label="Предыдущее">&lsaquo;</button>
+    <button class="carousel-btn carousel-next" aria-label="Следующее">&rsaquo;</button>
+    <div class="carousel-dots">
+      {% for img in images %}
+      <button class="carousel-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></button>
+      {% endfor %}
+    </div>
+  </div>
+  {% if captions.size > 0 %}
+  <figcaption class="carousel-caption">{{ captions[0] }}</figcaption>
+  {% endif %}
+</figure>

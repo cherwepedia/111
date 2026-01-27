@@ -1,0 +1,9 @@
+{% comment %}
+Usage: {% include card.html image="/assets/images/example.jpg" caption="Description" %}
+{% endcomment %}
+<figure class="article-card">
+  <img src="{{ include.image | relative_url }}" alt="{{ include.caption }}" data-lightbox>
+  {% if include.caption %}
+  <figcaption>{{ include.caption }}</figcaption>
+  {% endif %}
+</figure>

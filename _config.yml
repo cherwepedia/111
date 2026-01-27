@@ -1,0 +1,36 @@
+# Червепедия - Энциклопедия Черветреда
+title: "Червепедия"
+description: "Энциклопедия Черветреда — сборник знаний о мире червей"
+baseurl: "/111"
+url: "https://cherwepedia.github.io/111"
+
+# Permalink structure
+permalink: /:categories/:title/
+
+# Build settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  auto_ids: true
+  toc_levels: 2..3
+
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+# Exclude from build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - .same
+
+# Plugins (GitHub Pages compatible)
+plugins:
+  - jekyll-seo-tag
