@@ -18,7 +18,7 @@
   description: "Политические события и мемы"
   icon: "⚖️"
 
-  - id: projects
+- id: projects
   name: "Проекты"
   description: "Творческие проекты"
   icon: "⚖️"
