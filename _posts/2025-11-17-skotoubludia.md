@@ -8,8 +8,8 @@ categories: [politika]
 infobox:
   image: "https://i.pinimg.com/originals/de/69/5f/de695f1170a82045bd6788cad9c210f3.jpg"
   data:
-    - label: "Существует с"
-      value: "1991 — 2026"
+    - label: "Дата создания"
+      value: "1991"
 ---
 
 
