@@ -45,7 +45,6 @@
     }
 
     init() {
-      // Collect all lightbox images
       document.querySelectorAll('[data-lightbox]').forEach((img, index) => {
         img.style.cursor = 'pointer';
         img.addEventListener('click', () => this.open(index));
@@ -53,7 +52,6 @@
 
       this.images = Array.from(document.querySelectorAll('[data-lightbox]'));
 
-      // Events
       this.closeBtn.addEventListener('click', () => this.close());
       this.overlay.addEventListener('click', () => this.close());
       this.prevBtn.addEventListener('click', () => this.prev());
@@ -106,7 +104,6 @@
       this.currentSpan.textContent = this.currentIndex + 1;
       this.totalSpan.textContent = this.images.length;
 
-      // Show/hide nav buttons
       const showNav = this.images.length > 1;
       this.prevBtn.style.display = showNav ? '' : 'none';
       this.nextBtn.style.display = showNav ? '' : 'none';
@@ -127,7 +124,6 @@
       this.currentIndex = 0;
       this.captions = [];
 
-      // Get captions from images alt text
       this.slides.forEach(slide => {
         const img = slide.querySelector('img');
         this.captions.push(img?.alt || '');
@@ -144,7 +140,6 @@
         dot.addEventListener('click', () => this.goTo(index));
       });
 
-      // Touch support
       let startX = 0;
       let endX = 0;
 
@@ -188,8 +183,14 @@
   class CategoriesAccordion {
     constructor() {
       document.querySelectorAll('.category-header').forEach(header => {
+        const group = header.closest('.category-group');
+
+        // По умолчанию открываем все, кроме политики
+        if (group.id !== 'politika') {
+          group.classList.add('open');
+        }
+
         header.addEventListener('click', () => {
-          const group = header.closest('.category-group');
           group.classList.toggle('open');
         });
       });
@@ -202,7 +203,6 @@
     new Lightbox();
     new CategoriesAccordion();
 
-    // Initialize all carousels
     document.querySelectorAll('.carousel-container').forEach(el => {
       new Carousel(el);
     });
