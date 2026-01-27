@@ -31,18 +31,30 @@ title: Главная
     <header class="section-header">
       <h2 class="section-title">Избранные статьи</h2>
     </header>
+
     <div class="favorites-carousel">
       <div class="favorites-track">
         {% for post in favorites limit: 10 %}
         <a href="{{ post.url | relative_url }}" class="favorite-card">
           {% if post.infobox.image %}
-          <img src="{{ post.infobox.image | relative_url }}" alt="{{ post.title }}" class="favorite-image">
+          <img
+            src="{{ post.infobox.image | relative_url }}"
+            alt="{{ post.title }}"
+            class="favorite-image">
           {% else %}
           <div class="favorite-image" style="background: #eee;"></div>
           {% endif %}
+
           <div class="favorite-content">
             <h3 class="favorite-title">{{ post.title }}</h3>
-            <p class="favorite-excerpt">{{ post.intro | truncate: 100 }}</p>
+
+            <p class="favorite-excerpt">
+              {{ post.intro
+                | truncate: 100
+                | markdownify
+                | remove: '<p>'
+                | remove: '</p>' }}
+            </p>
           </div>
         </a>
         {% endfor %}
@@ -57,15 +69,28 @@ title: Главная
       <h2 class="section-title">Последние статьи</h2>
       <a href="{{ '/categories/' | relative_url }}" class="section-link">Все статьи →</a>
     </header>
+
     <div class="latest-list">
       {% for post in site.posts limit: 5 %}
       <a href="{{ post.url | relative_url }}" class="latest-item">
         {% if post.infobox.image %}
-        <img src="{{ post.infobox.image | relative_url }}" alt="{{ post.title }}" class="latest-image">
+        <img
+          src="{{ post.infobox.image | relative_url }}"
+          alt="{{ post.title }}"
+          class="latest-image">
         {% endif %}
+
         <div class="latest-content">
           <h3 class="latest-title">{{ post.title }}</h3>
-          <p class="latest-excerpt">{{ post.intro | truncate: 150 }}</p>
+
+          <p class="latest-excerpt">
+            {{ post.intro
+              | truncate: 150
+              | markdownify
+              | remove: '<p>'
+              | remove: '</p>' }}
+          </p>
+
           <div class="latest-meta">
             {% assign cat = post.categories | first %}
             {% assign category_data = site.data.categories | where: "id", cat | first %}
@@ -85,8 +110,8 @@ title: Главная
   {
     "title": {{ post.title | jsonify }},
     "url": {{ post.url | relative_url | jsonify }},
-    "intro": {{ post.intro | default: "" | jsonify }},
-    "content": {{ post.content | strip_html | truncate: 500 | jsonify }},
+    "intro": {{ post.intro | default: "" | strip_newlines | jsonify }},
+    "content": {{ post.content | strip_html | truncate: 500 | strip_newlines | jsonify }},
     "image": {{ post.infobox.image | default: "" | relative_url | jsonify }},
     "categories": {{ post.categories | jsonify }}
   }{% unless forloop.last %},{% endunless %}
