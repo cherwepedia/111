@@ -4,7 +4,7 @@ title: "Скотоублюдия"
 intro: >
   «Скотоублюдия» — крайне уничижительное и саркастическое обозначение Российской Федерации, северной территории хронического упадка, бездорожья, систематической глупости и тотального социального разложения.
 categories: [politika]
-image: "https://avatars.mds.yandex.net/i?id=7e487343222cb55103a1bc6aebb44982_l-4422933-images-thumbs&n=13"
+image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgnM59gTWhdCPXPebqskfYWV0uVPVknF19y5obTW6PoDcbinP6NQh5zPZFg9X3run8ayYCJJEDyndAB4JfGQgMytS4USrZpxzqXJiHqXKSpUZ5EWfg-zCmRemeSZXhaeY0zQw405XmKgN3OBGn2h2IMOcyfui37LRvbya-mAtNMZDOTW4Cno31c3vG_iUk/s580/tumblr_56932d5abcef4975bc290ca0f77d1725_ecf907dc_640.png"
 infobox:
   data:
     - label: "Существует с"
