@@ -66,6 +66,14 @@
     return matrix[b.length][a.length];
   }
 
+  // простой markdown → html (для результатов поиска)
+  function simpleMarkdown(text) {
+    if (!text) return '';
+    return text
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>');
+  }
+
   class ChervepediaSearch {
     constructor() {
       this.articles = [];
@@ -77,7 +85,7 @@
       this.init();
     }
 
-    async init() {
+    init() {
       this.loadArticles();
       this.bindEvents();
     }
@@ -174,7 +182,7 @@
           <div class="search-result-content">
             <div class="search-result-title">${a.title}</div>
             <div class="search-result-excerpt">
-              ${a.intro_html || ''}
+              ${simpleMarkdown(a.intro_html || a.intro || '')}
             </div>
           </div>
         </a>
@@ -196,6 +204,7 @@
     constructor() {
       this.buttons = document.querySelectorAll('.nav-random');
       this.articles = [];
+      this.ready = false;
       this.init();
     }
 
@@ -205,17 +214,27 @@
 
       try {
         this.articles = JSON.parse(dataScript.textContent);
-      } catch {}
+        this.ready = this.articles.length > 0;
+      } catch {
+        return;
+      }
 
-      this.buttons.forEach(btn =>
-        btn.addEventListener('click', () => this.goToRandom())
-      );
+      this.buttons.forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          this.goToRandom();
+        });
+      });
     }
 
     goToRandom() {
-      if (!this.articles.length) return;
-      const a = this.articles[Math.floor(Math.random() * this.articles.length)];
-      window.location.href = a.url;
+      if (!this.ready) return;
+
+      const index = Math.floor(Math.random() * this.articles.length);
+      const article = this.articles[index];
+      if (!article || !article.url) return;
+
+      window.location.assign(article.url);
     }
   }
 
