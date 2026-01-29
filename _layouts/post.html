@@ -1,19 +1,45 @@
 ---
 layout: default
 ---
-<article class="article">
+
+<article class="article" itemscope itemtype="https://schema.org/Article">
+
   <header class="article-header">
-    <h1 class="article-title">{{ page.title }}</h1>
+    <h1 class="article-title" itemprop="headline">{{ page.title }}</h1>
   </header>
+
   <div class="article-container">
+
     {% if page.infobox %}
-    <aside class="infobox">
+    <aside
+      class="infobox"
+      itemscope
+      itemtype="https://schema.org/Person"
+      aria-label="Информация о персонаже"
+    >
+
       {% if page.infobox.image %}
       <div class="infobox-image-wrapper">
-        <img src="{{ page.infobox.image }}" alt="{{ page.title }}" class="infobox-image" data-lightbox>
+        <img
+          src="{{ page.infobox.image }}"
+          alt="{{ page.title }}"
+          class="infobox-image"
+          itemprop="image"
+          loading="lazy"
+          data-lightbox>
         <div class="infobox-image-title">{{ page.title }}</div>
       </div>
       {% endif %}
+
+      <meta itemprop="name" content="{{ page.title }}">
+      <meta itemprop="url" content="{{ page.url | absolute_url }}">
+
+      {% if page.intro %}
+      <p class="infobox-intro" itemprop="description">
+        {{ page.intro | markdownify | strip_html }}
+      </p>
+      {% endif %}
+
       {% if page.infobox.data %}
       <table class="infobox-table">
         {% for item in page.infobox.data %}
@@ -24,28 +50,41 @@ layout: default
         {% endfor %}
       </table>
       {% endif %}
+
     </aside>
     {% endif %}
+
     <div class="article-body">
+
       {% if page.intro %}
-      <p class="article-intro">{{ page.intro | markdownify }}</p>
+      <p class="article-intro" itemprop="description">
+        {{ page.intro | markdownify }}
+      </p>
       {% endif %}
+
       <details class="toc" open>
         <summary class="toc-toggle">Содержание</summary>
         <nav class="toc-nav" id="toc-nav"></nav>
       </details>
-      <div class="article-content" id="article-content">
+
+      <div class="article-content" id="article-content" itemprop="articleBody">
         {{ content }}
       </div>
+
     </div>
   </div>
+
   {% if page.gallery %}
   <section class="article-gallery">
     <h2>Галерея</h2>
     <div class="gallery-grid">
       {% for img in page.gallery %}
       <figure class="gallery-item">
-        <img src="{{ img.src }}" alt="{{ img.caption }}" data-lightbox>
+        <img
+          src="{{ img.src }}"
+          alt="{{ img.caption }}"
+          loading="lazy"
+          data-lightbox>
         {% if img.caption %}
         <figcaption>{{ img.caption }}</figcaption>
         {% endif %}
@@ -54,17 +93,23 @@ layout: default
     </div>
   </section>
   {% endif %}
+
   <footer class="article-footer">
     <div class="article-categories">
       {% for cat in page.categories %}
       {% assign category_data = site.data.categories | where: "id", cat | first %}
-      <a href="{{ '/categories/' | relative_url }}#{{ cat }}" class="category-tag">
+      <a
+        href="{{ '/categories/' | relative_url }}#{{ cat }}"
+        class="category-tag"
+        rel="category">
         {{ category_data.name | default: cat }}
       </a>
       {% endfor %}
     </div>
   </footer>
+
 </article>
+
 <style>
 /* карточки / картинки могут обтекать текст */
 .article-content .card,
@@ -73,16 +118,15 @@ layout: default
   margin: 0 0 1em 1em;
   max-width: 45%;
 }
+
 /* элемент, которому JS поставит clear */
 .clear-after-float {
   clear: both;
 }
 </style>
+
 <script>
-/* === ПРАВИЛЬНОЕ ПОВЕДЕНИЕ ПОСЛЕ КАРТОЧЕК ===
-   1. карточка внутри абзаца → обтекание сохраняется
-   2. СЛЕДУЮЩИЙ блок начинается ПОД карточкой
-*/
+/* === ПРАВИЛЬНОЕ ПОВЕДЕНИЕ ПОСЛЕ КАРТОЧЕК === */
 (function () {
   const content = document.getElementById('article-content');
   if (!content) return;
@@ -92,7 +136,7 @@ layout: default
       block.tagName === 'P' &&
       block.querySelector('.card, figure')
     ) {
-      let next = blocks[i + 1];
+      const next = blocks[i + 1];
       if (next) {
         next.classList.add('clear-after-float');
       }
@@ -100,19 +144,23 @@ layout: default
   });
 })();
 </script>
+
 <script>
 /* === TOC === */
 (function() {
   const content = document.getElementById('article-content');
   const tocNav = document.getElementById('toc-nav');
   if (!content || !tocNav) return;
+
   const headings = content.querySelectorAll('h2, h3');
   if (!headings.length) {
     document.querySelector('.toc')?.remove();
     return;
   }
+
   const ul = document.createElement('ul');
   let currentH2Li = null;
+
   headings.forEach((h, i) => {
     if (!h.id) h.id = 'section-' + i;
     const li = document.createElement('li');
@@ -120,6 +168,7 @@ layout: default
     a.href = '#' + h.id;
     a.textContent = h.textContent;
     li.appendChild(a);
+
     if (h.tagName === 'H2') {
       currentH2Li = li;
       ul.appendChild(li);
@@ -132,6 +181,7 @@ layout: default
       sub.appendChild(li);
     }
   });
+
   tocNav.appendChild(ul);
 })();
 </script>
