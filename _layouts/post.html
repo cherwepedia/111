@@ -1,19 +1,80 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+
+  <title>
+    {% if page.title %}
+      {{ page.title }} | {{ site.title }}
+    {% else %}
+      {{ site.title }}
+    {% endif %}
+  </title>
+
+  <!-- ===== BASIC SEO ===== -->
+  {% if page.intro %}
+    <meta name="description" content="{{ page.intro | markdownify | strip_html | strip_newlines | truncate: 180 }}">
+  {% else %}
+    <meta name="description" content="{{ site.description }}">
+  {% endif %}
+
+  <!-- ===== OPEN GRAPH ===== -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="{{ site.title }}">
+  <meta property="og:title" content="{{ page.title | default: site.title }}">
+
+  {% if page.intro %}
+    <meta property="og:description" content="{{ page.intro | markdownify | strip_html | strip_newlines | truncate: 200 }}">
+  {% else %}
+    <meta property="og:description" content="{{ site.description }}">
+  {% endif %}
+
+  {% if page.infobox and page.infobox.image %}
+    <meta property="og:image" content="{{ page.infobox.image }}">
+  {% endif %}
+
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+
+  <!-- ===== TWITTER ===== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ page.title | default: site.title }}">
+
+  {% if page.intro %}
+    <meta name="twitter:description" content="{{ page.intro | markdownify | strip_html | strip_newlines | truncate: 200 }}">
+  {% else %}
+    <meta name="twitter:description" content="{{ site.description }}">
+  {% endif %}
+
+  {% if page.infobox and page.infobox.image %}
+    <meta name="twitter:image" content="{{ page.infobox.image }}">
+  {% endif %}
+
+  <!-- ===== CANONICAL ===== -->
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+
+</head>
+<body>
+
 <article class="article">
   <header class="article-header">
     <h1 class="article-title">{{ page.title }}</h1>
   </header>
+
   <div class="article-container">
+
     {% if page.infobox %}
     <aside class="infobox">
+
       {% if page.infobox.image %}
       <div class="infobox-image-wrapper">
-        <img src="{{ page.infobox.image }}" alt="{{ page.title }}" class="infobox-image" data-lightbox>
+        <img src="{{ page.infobox.image }}"
+             alt="{{ page.title }}"
+             class="infobox-image"
+             data-lightbox>
         <div class="infobox-image-title">{{ page.title }}</div>
       </div>
       {% endif %}
+
       {% if page.infobox.data %}
       <table class="infobox-table">
         {% for item in page.infobox.data %}
@@ -24,21 +85,30 @@ layout: default
         {% endfor %}
       </table>
       {% endif %}
+
     </aside>
     {% endif %}
+
     <div class="article-body">
+
       {% if page.intro %}
-      <p class="article-intro">{{ page.intro | markdownify }}</p>
+      <p class="article-intro">
+        {{ page.intro | markdownify }}
+      </p>
       {% endif %}
+
       <details class="toc" open>
         <summary class="toc-toggle">Содержание</summary>
         <nav class="toc-nav" id="toc-nav"></nav>
       </details>
+
       <div class="article-content" id="article-content">
         {{ content }}
       </div>
+
     </div>
   </div>
+
   {% if page.gallery %}
   <section class="article-gallery">
     <h2>Галерея</h2>
@@ -54,6 +124,7 @@ layout: default
     </div>
   </section>
   {% endif %}
+
   <footer class="article-footer">
     <div class="article-categories">
       {% for cat in page.categories %}
@@ -64,7 +135,9 @@ layout: default
       {% endfor %}
     </div>
   </footer>
+
 </article>
+
 <style>
 /* карточки / картинки могут обтекать текст */
 .article-content .card,
@@ -73,26 +146,30 @@ layout: default
   margin: 0 0 1em 1em;
   max-width: 45%;
 }
+
 /* элемент, которому JS поставит clear */
 .clear-after-float {
   clear: both;
 }
 </style>
+
 <script>
 /* === ПРАВИЛЬНОЕ ПОВЕДЕНИЕ ПОСЛЕ КАРТОЧЕК ===
    1. карточка внутри абзаца → обтекание сохраняется
-   2. СЛЕДУЮЩИЙ блок начинается ПОД карточкой
+   2. следующий блок начинается под карточкой
 */
 (function () {
   const content = document.getElementById('article-content');
   if (!content) return;
+
   const blocks = Array.from(content.children);
+
   blocks.forEach((block, i) => {
     if (
       block.tagName === 'P' &&
       block.querySelector('.card, figure')
     ) {
-      let next = blocks[i + 1];
+      const next = blocks[i + 1];
       if (next) {
         next.classList.add('clear-after-float');
       }
@@ -100,30 +177,45 @@ layout: default
   });
 })();
 </script>
+
 <script>
 /* === TOC === */
-(function() {
+(function () {
   const content = document.getElementById('article-content');
   const tocNav = document.getElementById('toc-nav');
+
   if (!content || !tocNav) return;
+
   const headings = content.querySelectorAll('h2, h3');
+
   if (!headings.length) {
-    document.querySelector('.toc')?.remove();
+    const toc = document.querySelector('.toc');
+    if (toc) toc.remove();
     return;
   }
+
   const ul = document.createElement('ul');
   let currentH2Li = null;
+
   headings.forEach((h, i) => {
-    if (!h.id) h.id = 'section-' + i;
+    if (!h.id) {
+      h.id = 'section-' + i;
+    }
+
     const li = document.createElement('li');
     const a = document.createElement('a');
+
     a.href = '#' + h.id;
     a.textContent = h.textContent;
+
     li.appendChild(a);
+
     if (h.tagName === 'H2') {
       currentH2Li = li;
       ul.appendChild(li);
-    } else if (h.tagName === 'H3' && currentH2Li) {
+    }
+
+    if (h.tagName === 'H3' && currentH2Li) {
       let sub = currentH2Li.querySelector('ul');
       if (!sub) {
         sub = document.createElement('ul');
@@ -132,6 +224,10 @@ layout: default
       sub.appendChild(li);
     }
   });
+
   tocNav.appendChild(ul);
 })();
 </script>
+
+</body>
+</html>
