@@ -2,26 +2,38 @@
 <html lang="ru">
 <head>
 
-  <!-- Yandex.Metrika counter -->
+  <!-- Yandex.Metrika -->
   <script type="text/javascript">
-      (function(m,e,t,r,i,k,a){
-          m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-          m[i].l=1*new Date();
-          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105469789', 'ym');
+    (function(m,e,t,r,i,k,a){
+      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+      m[i].l=1*new Date();
+      for (var j=0;j<document.scripts.length;j++){
+        if (document.scripts[j].src===r){return;}
+      }
+      k=e.createElement(t),a=e.getElementsByTagName(t)[0],
+      k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105469789','ym');
 
-      ym(105469789, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    ym(105469789,'init',{
+      ssr:true,
+      webvisor:true,
+      clickmap:true,
+      ecommerce:"dataLayer",
+      accurateTrackBounce:true,
+      trackLinks:true
+    });
   </script>
-  <noscript><div><img src="https://mc.yandex.ru/watch/105469789" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-  <!-- /Yandex.Metrika counter -->
+  <noscript>
+    <img src="https://mc.yandex.ru/watch/105469789" style="position:absolute;left:-9999px" alt="">
+  </noscript>
+  <!-- /Yandex.Metrika -->
 
   <!-- Favicon -->
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
-  
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -34,6 +46,8 @@
 
   <!-- SEO -->
   <meta name="description" content="{{ page_description }}">
+  <link rel="canonical" href="{{ page_url }}">
+  <meta name="robots" content="index, follow">
 
   <!-- Open Graph -->
   <meta property="og:type" content="article">
@@ -42,7 +56,7 @@
   <meta property="og:description" content="{{ page_description }}">
   <meta property="og:url" content="{{ page_url }}">
   {% if page_image %}
-  <meta property="og:image" content="{{ page_image }}">
+  <meta property="og:image" content="{{ page_image | absolute_url }}">
   {% endif %}
 
   <!-- Twitter -->
@@ -50,7 +64,7 @@
   <meta name="twitter:title" content="{{ page_title }}">
   <meta name="twitter:description" content="{{ page_description }}">
   {% if page_image %}
-  <meta name="twitter:image" content="{{ page_image }}">
+  <meta name="twitter:image" content="{{ page_image | absolute_url }}">
   {% endif %}
 
   <!-- Fonts -->
@@ -58,24 +72,65 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.263.1/font/lucide.min.css">
-
   <!-- Styles -->
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+
+  <!-- ===== STRUCTURED DATA ===== -->
+
+  {% if page.layout == "post" %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{ page_title }}",
+    "description": "{{ page_description }}",
+    "url": "{{ page_url }}",
+    "datePublished": "{{ page.date | date_to_xmlschema }}",
+    "author": {
+      "@type": "Organization",
+      "name": "{{ site.title }}"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "{{ site.title }}"
+    }
+    {% if page_image %},
+    "image": ["{{ page_image | absolute_url }}"]
+    {% endif %}
+  }
+  </script>
+  {% endif %}
+
+  {% if page.infobox and page.infobox.data %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "{{ page_title }}",
+    "description": "{{ page_description }}",
+    "url": "{{ page_url }}"
+    {% if page_image %},
+    "image": "{{ page_image | absolute_url }}"
+    {% endif %}
+  }
+  </script>
+  {% endif %}
+
 </head>
 <body>
 
   {% include header.html %}
 
   <main class="main-content">
-    {{ content }}
+    <article>
+      <h1>{{ page.title }}</h1>
+      {{ content }}
+    </article>
   </main>
 
   {% include footer.html %}
   {% include lightbox.html %}
 
-  <!-- Scripts -->
   <script src="{{ '/assets/js/search.js' | relative_url }}"></script>
   <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
 
