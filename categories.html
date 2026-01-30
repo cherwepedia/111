@@ -13,7 +13,12 @@ permalink: /categories/
     </p>
   </header>
 
-  <!-- TOC -->
+  {%- comment -%}
+  =====================
+  TOC — КАК В СТАТЬЕ
+  =====================
+  {%- endcomment -%}
+
   <details class="toc" open>
     <summary class="toc-toggle">Содержание</summary>
     <nav class="toc-nav">
@@ -32,24 +37,26 @@ permalink: /categories/
     </nav>
   </details>
 
-  <!-- CATEGORIES -->
+  {%- comment -%}
+  =====================
+  КАТЕГОРИИ В КАРТОЧКАХ
+  =====================
+  {%- endcomment -%}
+
   <div class="categories-grid">
 
     {% for category in site.data.categories %}
       {% assign posts = site.posts | where_exp: "p", "p.categories contains category.id" %}
       {% if posts.size > 0 %}
 
-        <details id="{{ category.id }}" class="category-card" open>
+        <section id="{{ category.id }}" class="category-card">
 
-          <summary class="category-header">
-            <span class="category-title">
-              {{ category.name }}
-            </span>
-
+          <h2 class="category-title">
+            {{ category.name }}
             <span class="category-count">
               ({{ posts.size }})
             </span>
-          </summary>
+          </h2>
 
           {% if category.description %}
             <div class="category-description">
@@ -67,7 +74,7 @@ permalink: /categories/
             {% endfor %}
           </ul>
 
-        </details>
+        </section>
 
       {% endif %}
     {% endfor %}
@@ -89,40 +96,30 @@ permalink: /categories/
 }
 
 /* =======================
-   CARD
+   CATEGORY CARD
    ======================= */
 
 .category-card {
-  border: 1px solid var(--color-border);
   background: var(--color-surface);
+  border: 1px solid var(--color-border);
   padding: var(--space-xl);
 }
 
 /* =======================
-   HEADER
+   TITLE
    ======================= */
-
-.category-header {
-  list-style: none;
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-sm);
-}
-
-.category-header::-webkit-details-marker {
-  display: none;
-}
 
 .category-title {
   font-family: var(--font-serif);
   font-size: 1.5rem;
   font-weight: 600;
+  margin-bottom: var(--space-sm);
 }
 
 .category-count {
-  font-size: .9rem;
+  font-size: 0.9rem;
   color: var(--color-text-muted);
+  font-weight: 400;
 }
 
 /* =======================
@@ -131,7 +128,7 @@ permalink: /categories/
 
 .category-description {
   color: var(--color-text-secondary);
-  font-size: .95rem;
+  font-size: 0.95rem;
   margin-bottom: var(--space-md);
 }
 
@@ -151,39 +148,17 @@ permalink: /categories/
   }
 }
 
-/* =======================
-   MOBILE COLLAPSE ONLY
-   ======================= */
-
-@media (min-width: 901px) {
-  /* на десктопе summary — просто заголовок */
-  .category-card {
-    pointer-events: none;
-  }
-
-  .category-card > * {
-    pointer-events: auto;
-  }
-
-  .category-header {
-    cursor: default;
-  }
+.article-list li {
+  break-inside: avoid;
+  margin-bottom: .35rem;
 }
 
-@media (max-width: 900px) {
-  .category-header {
-    cursor: pointer;
-  }
+.article-list a {
+  color: var(--color-link);
+  text-decoration: none;
+}
 
-  .category-header::after {
-    content: "▾";
-    margin-left: auto;
-    font-size: .8rem;
-    color: var(--color-text-muted);
-  }
-
-  details:not([open]) .category-header::after {
-    transform: rotate(-90deg);
-  }
+.article-list a:hover {
+  text-decoration: underline;
 }
 </style>
