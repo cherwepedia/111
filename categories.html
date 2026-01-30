@@ -5,103 +5,163 @@ permalink: /categories/
 ---
 
 <link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-  rel="stylesheet">
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/modern-normalize@2.0.0/modern-normalize.min.css">
 
 <style>
-  .category-card {
-    border: 1px solid #dee2e6;
-    border-radius: .75rem;
-    padding: 1.25rem 1.5rem;
-    background: #fff;
-    height: 100%;
+  :root {
+    --wiki-text: #202122;
+    --wiki-muted: #54595d;
+    --wiki-link: #0645ad;
+    --wiki-border: #a2a9b1;
+    --wiki-bg: #ffffff;
   }
 
-  .category-title {
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: .4rem;
-    margin-bottom: .75rem;
-    font-weight: 600;
+  body {
+    background: var(--wiki-bg);
+    color: var(--wiki-text);
+    font-family: -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Roboto, Helvetica, Arial,
+                 "Linux Libertine", serif;
+    line-height: 1.6;
+  }
+
+  .mw-container {
+    max-width: 960px;
+    margin: 2.5rem auto;
+    padding: 0 1rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 400;
+    border-bottom: 1px solid var(--wiki-border);
+    padding-bottom: .3rem;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-top: 2.5rem;
+    margin-bottom: .4rem;
   }
 
   .category-description {
+    color: var(--wiki-muted);
     font-size: .95rem;
-    color: #6c757d;
-    margin-bottom: .75rem;
+    margin-bottom: .5rem;
   }
 
-  .articles-list {
-    columns: 2;
-    column-gap: 1.75rem;
+  .article-list {
+    column-count: 3;
+    column-gap: 2.5rem;
+    padding-left: 1.2rem;
   }
 
-  @media (max-width: 768px) {
-    .articles-list {
-      columns: 1;
-    }
+  @media (max-width: 900px) {
+    .article-list { column-count: 2; }
   }
 
-  .articles-list li {
-    margin-bottom: .35rem;
+  @media (max-width: 600px) {
+    .article-list { column-count: 1; }
+  }
+
+  .article-list li {
     break-inside: avoid;
+    margin-bottom: .3rem;
   }
 
-  .articles-list a {
+  a {
+    color: var(--wiki-link);
     text-decoration: none;
   }
 
-  .articles-list a:hover {
+  a:hover {
     text-decoration: underline;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #eaecf0;
+    margin: 2.5rem 0;
+  }
+
+  .toc {
+    background: #f8f9fa;
+    border: 1px solid #eaecf0;
+    padding: .75rem 1rem;
+    display: inline-block;
+    font-size: .95rem;
+  }
+
+  .toc ul {
+    margin: 0;
+    padding-left: 1.2rem;
   }
 </style>
 
-<div class="container my-5">
+<div class="mw-container">
 
-  <header class="mb-4">
-    <h1 class="mb-1">Категории</h1>
-    <p class="text-muted">
-      Навигация по статьям энциклопедии
-    </p>
-  </header>
+  <h1>Категории</h1>
 
-  <div class="row g-4">
+  <p class="category-description">
+    Список статей, сгруппированных по темам.
+  </p>
 
-    {% for category in site.data.categories %}
-      {% assign cat_posts = site.posts | where_exp: "post", "post.categories contains category.id" %}
-      {% if cat_posts.size > 0 %}
+  {%- comment -%}
+  ============
+  ОГЛАВЛЕНИЕ
+  ============
+  {%- endcomment -%}
 
-        <div class="col-12 col-lg-6">
-          <section class="category-card" id="{{ category.id }}">
-
-            <h2 class="h5 category-title">
+  <nav class="toc">
+    <strong>Содержание</strong>
+    <ul>
+      {% for category in site.data.categories %}
+        {% assign posts = site.posts | where_exp: "p", "p.categories contains category.id" %}
+        {% if posts.size > 0 %}
+          <li>
+            <a href="#{{ category.id }}">
               {{ category.name }}
-              <span class="text-muted fw-normal">
-                ({{ cat_posts.size }})
-              </span>
-            </h2>
+            </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
 
-            {% if category.description %}
-              <p class="category-description">
-                {{ category.description }}
-              </p>
-            {% endif %}
+  {%- comment -%}
+  ==================
+  КАТЕГОРИИ
+  ==================
+  {%- endcomment -%}
 
-            <ul class="list-unstyled articles-list">
-              {% for post in cat_posts %}
-                <li>
-                  <a href="{{ post.url | relative_url }}">
-                    {{ post.title }}
-                  </a>
-                </li>
-              {% endfor %}
-            </ul>
+  {% for category in site.data.categories %}
+    {% assign posts = site.posts | where_exp: "p", "p.categories contains category.id" %}
+    {% if posts.size > 0 %}
 
-          </section>
-        </div>
+      <section id="{{ category.id }}">
+        <h2>{{ category.name }}</h2>
 
-      {% endif %}
-    {% endfor %}
+        {% if category.description %}
+          <div class="category-description">
+            {{ category.description }}
+          </div>
+        {% endif %}
 
-  </div>
+        <ul class="article-list">
+          {% for post in posts %}
+            <li>
+              <a href="{{ post.url | relative_url }}">
+                {{ post.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+
+    {% endif %}
+  {% endfor %}
 
 </div>
