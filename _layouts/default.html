@@ -4,17 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  {% assign page_title = page.title | default: site.title %}
+  {% assign site_name = "Червепедия" %}
+  {% assign page_title = page.title | default: site_name %}
+  {% assign full_title = page_title | append: " | " | append: site_name %}
+
   {% assign page_description = page.intro 
     | default: site.description 
     | strip_html 
     | strip_newlines 
     | escape 
     | truncate: 160 %}
+
   {% assign page_image = page.infobox.image | default: site.og_image %}
   {% assign page_url = page.url | absolute_url %}
 
-  <title>{{ page_title }} | {{ site.title }}</title>
+  <title>{{ full_title }}</title>
 
   <!-- SEO -->
   <meta name="description" content="{{ page_description }}">
@@ -22,8 +26,8 @@
 
   <!-- Open Graph -->
   <meta property="og:type" content="article">
-  <meta property="og:site_name" content="{{ site.title }}">
-  <meta property="og:title" content="{{ page_title }}">
+  <meta property="og:site_name" content="{{ site_name }}">
+  <meta property="og:title" content="{{ full_title }}">
   <meta property="og:description" content="{{ page_description }}">
   <meta property="og:url" content="{{ page_url }}">
 
@@ -39,7 +43,7 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{{ page_title }}">
+  <meta name="twitter:title" content="{{ full_title }}">
   <meta name="twitter:description" content="{{ page_description }}">
   {% if page_image %}
   <meta name="twitter:image" content="{{ page_image | absolute_url }}">
@@ -50,12 +54,12 @@
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "{{ page_title }}",
+    "name": "{{ full_title }}",
     "description": "{{ page_description }}",
     "url": "{{ page_url }}",
     "isPartOf": {
       "@type": "WebSite",
-      "name": "{{ site.title }}",
+      "name": "{{ site_name }}",
       "url": "{{ site.url }}"
     },
     "about": {
