@@ -4,6 +4,8 @@ title: Категории
 permalink: /categories/
 ---
 
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <div class="container">
 
   <header class="page-header">
@@ -13,12 +15,7 @@ permalink: /categories/
     </p>
   </header>
 
-  {%- comment -%}
-  =====================
-  TOC — КАК В СТАТЬЕ
-  =====================
-  {%- endcomment -%}
-
+  <!-- TOC -->
   <details class="toc" open>
     <summary class="toc-toggle">Содержание</summary>
     <nav class="toc-nav">
@@ -37,26 +34,37 @@ permalink: /categories/
     </nav>
   </details>
 
-  {%- comment -%}
-  =====================
-  КАТЕГОРИИ В КАРТОЧКАХ
-  =====================
-  {%- endcomment -%}
-
+  <!-- CATEGORIES -->
   <div class="categories-grid">
 
     {% for category in site.data.categories %}
       {% assign posts = site.posts | where_exp: "p", "p.categories contains category.id" %}
       {% if posts.size > 0 %}
 
-        <section id="{{ category.id }}" class="category-card">
+        <details id="{{ category.id }}" class="category-card" open>
 
-          <h2 class="category-title">
-            {{ category.name }}
-            <span class="category-count">
-              ({{ posts.size }})
-            </span>
-          </h2>
+          <summary class="category-header">
+
+            <div class="category-title-wrap">
+              <span class="category-icon">
+                {% if category.id == "chervethread" %}
+                  <i data-lucide="bug"></i>
+                {% else %}
+                  <i data-lucide="folder"></i>
+                {% endif %}
+              </span>
+
+              <span class="category-title">
+                {{ category.name }}
+              </span>
+
+              <span class="category-count">
+                ({{ posts.size }})
+              </span>
+            </div>
+
+            <span class="category-toggle"></span>
+          </summary>
 
           {% if category.description %}
             <div class="category-description">
@@ -74,7 +82,7 @@ permalink: /categories/
             {% endfor %}
           </ul>
 
-        </section>
+        </details>
 
       {% endif %}
     {% endfor %}
@@ -96,45 +104,78 @@ permalink: /categories/
 }
 
 /* =======================
-   CATEGORY CARD
+   CARD (details)
    ======================= */
 
 .category-card {
-  background: var(--color-surface);
   border: 1px solid var(--color-border);
+  background: var(--color-surface);
   padding: var(--space-xl);
 }
 
 /* =======================
-   TITLE
+   HEADER (summary)
    ======================= */
+
+.category-header {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.category-header::-webkit-details-marker {
+  display: none;
+}
+
+.category-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.category-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.75;
+  color: var(--color-text-secondary);
+}
 
 .category-title {
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 600;
-  margin-bottom: var(--space-sm);
 }
 
 .category-count {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--color-text-muted);
-  font-weight: 400;
+}
+
+/* стрелка */
+.category-toggle::before {
+  content: "▼";
+  font-size: .7rem;
+  color: var(--color-text-muted);
+  transition: transform var(--transition-fast);
+}
+
+.category-card:not([open]) .category-toggle::before {
+  transform: rotate(-90deg);
 }
 
 /* =======================
-   DESCRIPTION
+   BODY
    ======================= */
 
 .category-description {
-  color: var(--color-text-secondary);
-  font-size: 0.95rem;
+  margin-top: var(--space-md);
   margin-bottom: var(--space-md);
+  color: var(--color-text-secondary);
+  font-size: .95rem;
 }
-
-/* =======================
-   ARTICLE LIST
-   ======================= */
 
 .article-list {
   column-count: 2;
@@ -162,3 +203,7 @@ permalink: /categories/
   text-decoration: underline;
 }
 </style>
+
+<script>
+  lucide.createIcons();
+</script>
