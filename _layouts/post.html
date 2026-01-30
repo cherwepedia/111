@@ -71,54 +71,84 @@ layout: default
       {% endfor %}
     </div>
   </footer>
-</article>
 
-    <!-- Telegram Discussion Widget -->
+  <!-- Telegram Discussion Widget -->
+  <section class="article-comments">
+    <h2>Обсуждение</h2>
     <div class="telegram-comments">
-      <h2>Обсуждение</h2>
-      <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-discussion="chervethreadoff" data-comments-limit="5"></script>
+      <script
+        async
+        src="https://telegram.org/js/telegram-widget.js?22"
+        data-telegram-discussion="chervethreadoff"
+        data-comments-limit="5">
+      </script>
     </div>
-  </div>
+  </section>
 </article>
 
 <style>
-/* === КЛЮЧЕВОЙ ФИКС === */
-/* убираем flex, чтобы float работал нормально */
+/* === БАЗОВЫЕ ОТСТУПЫ === */
+:root {
+  --paragraph-gap: 1.2em;
+}
+
+/* === ФИКС FLEX === */
 .article-container {
   display: block;
 }
 
-/* инфобокс как в вики */
+/* === ИНФОБОКС === */
 .infobox {
   float: right;
   width: 300px;
-  margin: 0 0 1em 1.5em;
+  margin: 0 0 var(--paragraph-gap) 1.5em;
 }
 
-/* после низа инфобокса текст сам занимает всю ширину */
+/* === ОСНОВНОЙ ТЕКСТ === */
 .article-body {
   overflow: visible;
 }
 
-/* карточки / картинки внутри текста */
+.article-content p {
+  margin-bottom: var(--paragraph-gap);
+}
+
+/* карточки / картинки */
 .article-content .card,
 .article-content figure {
   float: right;
-  margin: 0 0 1em 1em;
+  margin: 0 0 var(--paragraph-gap) 1em;
   max-width: 45%;
 }
 
-/* очистка после карточек */
+/* очистка после float */
 .clear-after-float {
   clear: both;
+}
+
+/* === КОММЕНТАРИИ === */
+.article-comments {
+  margin-top: var(--paragraph-gap);
+}
+
+.telegram-comments {
+  max-width: 100%;
+}
+
+/* делаем виджет по ширине контента */
+.article-comments,
+.telegram-comments {
+  width: 100%;
+}
+
+/* чтобы визуально совпадало с текстом */
+.article-comments h2 {
+  margin-bottom: var(--paragraph-gap);
 }
 </style>
 
 <script>
-/* === ПРАВИЛЬНОЕ ПОВЕДЕНИЕ ПОСЛЕ КАРТОЧЕК ===
-   1. карточка внутри абзаца → обтекание
-   2. следующий блок начинается ПОД карточкой
-*/
+/* === FLOAT-КАРТОЧКИ === */
 (function () {
   const content = document.getElementById('article-content');
   if (!content) return;
