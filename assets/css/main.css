@@ -1071,64 +1071,103 @@ button {
    RESPONSIVE
    ============================================ */
 @media (max-width: 900px) {
-  .infobox {
-    float: none;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto var(--space-xl);
-  }
+
+  /* ===== ОТКЛЮЧАЕМ ОБТЕКАНИЕ ВООБЩЕ ===== */
+  .infobox,
   .article-card,
-  .article-carousel {
-    float: none;
-    width: 100%;
-    max-width: 400px;
-    margin: var(--space-lg) auto;
+  .article-carousel,
+  .article-content figure,
+  .article-content .card {
+    float: none !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: var(--space-lg) 0 !important;
+    clear: both;
   }
+
+  /* инфобокс как обычный блок */
+  .infobox {
+    margin-top: 0;
+  }
+
+  /* заголовки больше не чистят float */
   .article-content h2 {
     clear: none;
   }
 }
+
 @media (max-width: 768px) {
+
+  /* ===== УМЕНЬШАЕМ БАЗОВЫЕ ОТСТУПЫ ===== */
   :root {
     --space-lg: 1rem;
     --space-xl: 1.5rem;
     --space-2xl: 2rem;
     --space-3xl: 2.5rem;
   }
+
+  /* ===== ВСЁ СТРОГО В КОЛОНКУ ===== */
+  .article-container,
+  .article-body,
+  .article-content {
+    display: block;
+    width: 100%;
+  }
+
+  /* интро и TOC */
+  .article-intro {
+    margin-bottom: var(--space-md);
+  }
+
+  .toc {
+    margin-top: var(--space-md);
+  }
+
+  /* карточки и карусели — обычные блоки */
+  .article-card,
+  .article-carousel {
+    width: 100%;
+    margin: var(--space-lg) 0;
+  }
+
+  /* галерея — 2 колонки */
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* кнопки карусели всегда видимы */
+  .carousel-btn {
+    opacity: 1;
+  }
+
+  /* ===== ПРОЧЕЕ ===== */
   .home-hero {
     padding: var(--space-2xl) 0;
   }
+
   .home-actions {
     flex-direction: column;
     align-items: center;
   }
+
   .btn {
     width: 100%;
     max-width: 300px;
     justify-content: center;
   }
-  .favorite-card {
-    flex: 0 0 260px;
-  }
-  .latest-item {
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-  .latest-image {
-    width: 100%;
-    height: 160px;
-  }
+
+  .latest-item,
   .category-article {
     flex-direction: column;
     gap: var(--space-md);
   }
+
+  .latest-image,
   .category-article-image {
     width: 100%;
-    height: 150px;
+    height: auto;
   }
-  .gallery-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+
   .lightbox-prev,
   .lightbox-next {
     position: fixed;
@@ -1136,21 +1175,24 @@ button {
     bottom: 20px;
     transform: none;
   }
+
   .lightbox-prev {
     left: 20px;
   }
+
   .lightbox-next {
     right: 20px;
   }
-  .carousel-btn {
-    opacity: 1;
-  }
 }
+
 @media (max-width: 480px) {
+
+  /* галерея — 1 колонка */
   .gallery-grid {
     grid-template-columns: 1fr;
   }
 }
+
 /* ============================================
    UTILITIES
    ============================================ */
@@ -1165,8 +1207,9 @@ button {
   white-space: nowrap;
   border: 0;
 }
+
 .clearfix::after {
   content: "";
   display: table;
   clear: both;
-} 
+}
