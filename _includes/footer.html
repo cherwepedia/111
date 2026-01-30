@@ -2,13 +2,19 @@
   <div class="container">
     <div class="footer-content">
       <div class="footer-brand">
-        <span class="logo-icon">🪱</span>
+        <img
+          src="{{ '/logo.png' | relative_url }}"
+          alt="Червепедия"
+          style="height: 1em; width: auto; display: block;"
+        >
         <span>Червепедия</span>
       </div>
+
       <p class="footer-description">{{ site.description }}</p>
     </div>
+
     <div class="footer-meta">
-      <p>&copy; {{ 'now' | date: "%Y" }} Червепедия. Все материалы созданы сообществом.</p>
+      <p>&copy; {{ 'now' | date: "%Y" }} Червепедия. Все материалы взяты из открытых источников.</p>
     </div>
   </div>
 </footer>
