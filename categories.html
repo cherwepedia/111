@@ -4,72 +4,141 @@ title: Категории
 permalink: /categories/
 ---
 
+<a id="top"></a>
+
 <div class="container">
+
   <header class="page-header">
     <h1 class="page-title">Категории</h1>
-    <p class="page-subtitle">Все статьи энциклопедии, сгруппированные по категориям</p>
+    <p class="page-subtitle">Содержание энциклопедии по категориям и алфавиту</p>
   </header>
 
-  <div class="categories-list">
-    {% for category in site.data.categories %}
-      {% assign cat_posts = site.posts | where_exp: "post", "post.categories contains category.id" %}
-      {% if cat_posts.size > 0 %}
-      <div class="category-group" id="{{ category.id }}">
-        <div class="category-header">
-          <div class="category-info">
-            <span class="category-icon">{{ category.icon }}</span>
-            <div>
-              <h2 class="category-name">{{ category.name }}</h2>
-              <p class="category-description">
-                {{ category.description }} ({{ cat_posts.size }})
-              </p>
-            </div>
-          </div>
-          <span class="category-toggle">▼</span>
-        </div>
+  {%- comment -%}
+  =========================
+  СОДЕРЖАНИЕ КАТЕГОРИЙ
+  =========================
+  {%- endcomment -%}
 
-        <div class="category-articles">
-          {% for post in cat_posts %}
-          <a href="{{ post.url | relative_url }}" class="category-article">
-            {% if post.infobox.image %}
-            <img
-              src="{{ post.infobox.image | relative_url }}"
-              alt="{{ post.title }}"
-              class="category-article-image">
-            {% endif %}
+  <nav class="categories-toc">
+    <h2>Категории</h2>
+    <ul>
+      {% for category in site.data.categories %}
+        {% assign cat_posts = site.posts | where_exp: "post", "post.categories contains category.id" %}
+        {% if cat_posts.size > 0 %}
+          <li>
+            <a href="#cat-{{ category.id }}">
+              {{ category.name }} ({{ cat_posts.size }})
+            </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
 
-            <div class="category-article-content">
-              <h3 class="category-article-title">{{ post.title }}</h3>
+  <hr>
 
-              <p class="category-article-excerpt">
-                {{ post.intro
-                  | truncate: 150
-                  | markdownify
-                  | remove: '<p>'
-                  | remove: '</p>' }}
-              </p>
-            </div>
-          </a>
-          {% endfor %}
-        </div>
-      </div>
+  {%- comment -%}
+  =========================
+  АЛФАВИТНЫЙ ИНДЕКС
+  =========================
+  {%- endcomment -%}
+
+  {% assign letters = "" %}
+  {% for post in site.posts %}
+    {% assign first = post.title | strip | slice: 0, 1 | upcase %}
+    {% unless letters contains first %}
+      {% assign letters = letters | append: first | append: "," %}
+    {% endunless %}
+  {% endfor %}
+  {% assign letters = letters | split: "," | sort %}
+
+  <nav class="alphabet-index">
+    <h2>Алфавитный указатель</h2>
+    <p>
+      {% for letter in letters %}
+        {% if letter != "" %}
+          <a href="#letter-{{ letter }}">{{ letter }}</a>
+        {% endif %}
+      {% endfor %}
+    </p>
+  </nav>
+
+  <hr>
+
+  {%- comment -%}
+  =========================
+  СТАТЬИ ПО АЛФАВИТУ
+  =========================
+  {%- endcomment -%}
+
+  <div class="alphabet-content">
+    {% for letter in letters %}
+      {% if letter != "" %}
+
+        <section id="letter-{{ letter }}">
+          <h2>{{ letter }}</h2>
+
+          <ul>
+            {% for post in site.posts %}
+              {% assign first = post.title | strip | slice: 0, 1 | upcase %}
+              {% if first == letter %}
+                <li>
+                  <a href="{{ post.url | relative_url }}">
+                    {{ post.title }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+
+          <p class="back-to-top">
+            <a href="#top">↑ Наверх</a>
+          </p>
+        </section>
+
+        <hr>
+
       {% endif %}
     {% endfor %}
   </div>
-</div>
 
-<!-- Search Data for JavaScript -->
-<script type="application/json" id="search-data">
-[
-  {% for post in site.posts %}
-  {
-    "title": {{ post.title | jsonify }},
-    "url": {{ post.url | relative_url | jsonify }},
-    "intro": {{ post.intro | default: "" | strip_newlines | jsonify }},
-    "content": {{ post.content | strip_html | truncate: 500 | strip_newlines | jsonify }},
-    "image": {{ post.infobox.image | default: "" | relative_url | jsonify }},
-    "categories": {{ post.categories | jsonify }}
-  }{% unless forloop.last %},{% endunless %}
-  {% endfor %}
-]
-</script>
+  {%- comment -%}
+  =========================
+  КАТЕГОРИИ → СТАТЬИ
+  =========================
+  {%- endcomment -%}
+
+  <div class="categories-content">
+    {% for category in site.data.categories %}
+      {% assign cat_posts = site.posts | where_exp: "post", "post.categories contains category.id" %}
+      {% if cat_posts.size > 0 %}
+
+        <section id="cat-{{ category.id }}">
+          <h2>{{ category.name }}</h2>
+
+          {% if category.description %}
+            <p>{{ category.description }}</p>
+          {% endif %}
+
+          <ul>
+            {% for post in cat_posts %}
+              <li>
+                <a href="{{ post.url | relative_url }}">
+                  {{ post.title }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <p class="back-to-top">
+            <a href="#top">↑ Наверх</a>
+          </p>
+        </section>
+
+        <hr>
+
+      {% endif %}
+    {% endfor %}
+  </div>
+
+</div>
