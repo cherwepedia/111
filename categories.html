@@ -4,144 +4,51 @@ title: Категории
 permalink: /categories/
 ---
 
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/modern-normalize@2.0.0/modern-normalize.min.css">
+<div class="page">
 
-<style>
-  :root {
-    --wiki-text: #202122;
-    --wiki-muted: #54595d;
-    --wiki-link: #0645ad;
-    --wiki-border: #a2a9b1;
-    --wiki-bg: #ffffff;
-  }
-
-  body {
-    background: var(--wiki-bg);
-    color: var(--wiki-text);
-    font-family: -apple-system, BlinkMacSystemFont,
-                 "Segoe UI", Roboto, Helvetica, Arial,
-                 "Linux Libertine", serif;
-    line-height: 1.6;
-  }
-
-  .mw-container {
-    max-width: 960px;
-    margin: 2.5rem auto;
-    padding: 0 1rem;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-    font-weight: 400;
-    border-bottom: 1px solid var(--wiki-border);
-    padding-bottom: .3rem;
-    margin-bottom: 1rem;
-  }
-
-  h2 {
-    font-size: 1.3rem;
-    font-weight: 500;
-    margin-top: 2.5rem;
-    margin-bottom: .4rem;
-  }
-
-  .category-description {
-    color: var(--wiki-muted);
-    font-size: .95rem;
-    margin-bottom: .5rem;
-  }
-
-  .article-list {
-    column-count: 3;
-    column-gap: 2.5rem;
-    padding-left: 1.2rem;
-  }
-
-  @media (max-width: 900px) {
-    .article-list { column-count: 2; }
-  }
-
-  @media (max-width: 600px) {
-    .article-list { column-count: 1; }
-  }
-
-  .article-list li {
-    break-inside: avoid;
-    margin-bottom: .3rem;
-  }
-
-  a {
-    color: var(--wiki-link);
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  hr {
-    border: none;
-    border-top: 1px solid #eaecf0;
-    margin: 2.5rem 0;
-  }
-
-  .toc {
-    background: #f8f9fa;
-    border: 1px solid #eaecf0;
-    padding: .75rem 1rem;
-    display: inline-block;
-    font-size: .95rem;
-  }
-
-  .toc ul {
-    margin: 0;
-    padding-left: 1.2rem;
-  }
-</style>
-
-<div class="mw-container">
-
-  <h1>Категории</h1>
-
-  <p class="category-description">
-    Список статей, сгруппированных по темам.
-  </p>
+  <header class="page-header">
+    <h1 class="page-title">Категории</h1>
+    <p class="page-subtitle">
+      Навигация по статьям энциклопедии
+    </p>
+  </header>
 
   {%- comment -%}
-  ============
-  ОГЛАВЛЕНИЕ
-  ============
+  =====================
+  TOC — КАК В СТАТЬЕ
+  =====================
   {%- endcomment -%}
 
-  <nav class="toc">
-    <strong>Содержание</strong>
-    <ul>
-      {% for category in site.data.categories %}
-        {% assign posts = site.posts | where_exp: "p", "p.categories contains category.id" %}
-        {% if posts.size > 0 %}
-          <li>
-            <a href="#{{ category.id }}">
-              {{ category.name }}
-            </a>
-          </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-  </nav>
+  <details class="toc" open>
+    <summary class="toc-toggle">Содержание</summary>
+    <nav class="toc-nav">
+      <ul>
+        {% for category in site.data.categories %}
+          {% assign posts = site.posts | where_exp: "p", "p.categories contains category.id" %}
+          {% if posts.size > 0 %}
+            <li>
+              <a href="#{{ category.id }}">
+                {{ category.name }}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </nav>
+  </details>
 
   {%- comment -%}
-  ==================
+  =====================
   КАТЕГОРИИ
-  ==================
+  =====================
   {%- endcomment -%}
 
   {% for category in site.data.categories %}
     {% assign posts = site.posts | where_exp: "p", "p.categories contains category.id" %}
     {% if posts.size > 0 %}
 
-      <section id="{{ category.id }}">
+      <section id="{{ category.id }}" class="category-section">
+
         <h2>{{ category.name }}</h2>
 
         {% if category.description %}
@@ -159,9 +66,69 @@ permalink: /categories/
             </li>
           {% endfor %}
         </ul>
+
       </section>
 
     {% endif %}
   {% endfor %}
 
 </div>
+
+<style>
+/* =======================
+   CATEGORY PAGE TWEAKS
+   (вписывается в общий стиль)
+   ======================= */
+
+.category-section {
+  margin-top: var(--space-2xl);
+}
+
+.category-section h2 {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.category-section:first-of-type h2 {
+  border-top: none;
+  padding-top: 0;
+}
+
+.category-description {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: var(--space-md);
+}
+
+.article-list {
+  column-count: 3;
+  column-gap: 2.5rem;
+  padding-left: var(--space-xl);
+}
+
+@media (max-width: 900px) {
+  .article-list { column-count: 2; }
+}
+
+@media (max-width: 600px) {
+  .article-list { column-count: 1; }
+}
+
+.article-list li {
+  break-inside: avoid;
+  margin-bottom: .35rem;
+}
+
+.article-list a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+.article-list a:hover {
+  text-decoration: underline;
+}
+</style>
