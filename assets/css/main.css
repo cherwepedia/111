@@ -677,11 +677,14 @@ button {
   font-size: 1.125rem;
   line-height: 1.8;
   color: var(--color-text);
+  margin-bottom: var(--space-md);
 }
+
 .article-intro strong,
 .article-intro b {
   font-weight: 600;
 }
+
 /* TOC */
 .toc {
   margin-bottom: var(--space-xl);
@@ -1147,4 +1150,4 @@ button {
   content: "";
   display: table;
   clear: both;
-} СУКА ТУПАЯ МНЕ ТОЛЬКО ОБТЕКАЕМОСЬ НУЖНО ПОФИКСИТЬ
+} 
