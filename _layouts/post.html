@@ -1,208 +1,107 @@
 ---
 layout: default
+title: Категории
+permalink: /categories/
 ---
-<article class="article">
-  <header class="article-header">
-    <h1 class="article-title">{{ page.title }}</h1>
-  </header>
 
-  <div class="article-container">
-    {% if page.infobox %}
-    <aside class="infobox">
-      {% if page.infobox.image %}
-      <div class="infobox-image-wrapper">
-        <img src="{{ page.infobox.image }}" alt="{{ page.title }}" class="infobox-image" data-lightbox>
-        <div class="infobox-image-title">{{ page.title }}</div>
-      </div>
-      {% endif %}
-
-      {% if page.infobox.data %}
-      <table class="infobox-table">
-        {% for item in page.infobox.data %}
-        <tr>
-          <th>{{ item.label }}</th>
-          <td>{{ item.value }}</td>
-        </tr>
-        {% endfor %}
-      </table>
-      {% endif %}
-    </aside>
-    {% endif %}
-
-    <div class="article-body">
-      {% if page.intro %}
-      <p class="article-intro">{{ page.intro | markdownify }}</p>
-      {% endif %}
-
-      <details class="toc" open>
-        <summary class="toc-toggle">Содержание</summary>
-        <nav class="toc-nav" id="toc-nav"></nav>
-      </details>
-
-      <div class="article-content" id="article-content">
-        {{ content }}
-      </div>
-    </div>
-  </div>
-
-  {% if page.gallery %}
-  <section class="article-gallery">
-    <h2>Галерея</h2>
-    <div class="gallery-grid">
-      {% for img in page.gallery %}
-      <figure class="gallery-item">
-        <img src="{{ img.src }}" alt="{{ img.caption }}" data-lightbox>
-        {% if img.caption %}
-        <figcaption>{{ img.caption }}</figcaption>
-        {% endif %}
-      </figure>
-      {% endfor %}
-    </div>
-  </section>
-  {% endif %}
-
-  <footer class="article-footer">
-    <div class="article-categories">
-      {% for cat in page.categories %}
-      {% assign category_data = site.data.categories | where: "id", cat | first %}
-      <a href="{{ '/categories/' | relative_url }}#{{ cat }}" class="category-tag">
-        {{ category_data.name | default: cat }}
-      </a>
-      {% endfor %}
-    </div>
-  </footer>
-
-  <!-- Telegram Discussion Widget -->
-  <section class="article-comments">
-    <div class="telegram-comments">
-      <script
-        async
-        src="https://telegram.org/js/telegram-widget.js?22"
-        data-telegram-discussion="chervethreadoff"
-        data-comments-limit="5">
-      </script>
-    </div>
-  </section>
-</article>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet">
 
 <style>
-/* === БАЗОВЫЕ ОТСТУПЫ === */
-:root {
-  --paragraph-gap: 1.2em;
-}
-
-/* === ФИКС FLEX === */
-.article-container {
-  display: block;
-}
-
-/* === ИНФОБОКС === */
-.infobox {
-  float: right;
-  width: 300px;
-  margin: 0 0 var(--paragraph-gap) 1.5em;
-}
-
-/* === ОСНОВНОЙ ТЕКСТ === */
-.article-body {
-  overflow: visible;
-}
-
-.article-content p {
-  margin-bottom: var(--paragraph-gap);
-}
-
-/* карточки / картинки */
-.article-content .card,
-.article-content figure {
-  float: right;
-  margin: 0 0 var(--paragraph-gap) 1em;
-  max-width: 45%;
-}
-
-/* очистка после float */
-.clear-after-float {
-  clear: both;
-}
-
-/* === КОММЕНТАРИИ === */
-.article-comments {
-  margin-top: var(--paragraph-gap);
-}
-
-.telegram-comments {
-  max-width: 100%;
-}
-
-/* делаем виджет по ширине контента */
-.article-comments,
-.telegram-comments {
-  width: 100%;
-}
-
-/* чтобы визуально совпадало с текстом */
-.article-comments h2 {
-  margin-bottom: var(--paragraph-gap);
-}
-</style>
-
-<script>
-/* === FLOAT-КАРТОЧКИ === */
-(function () {
-  const content = document.getElementById('article-content');
-  if (!content) return;
-
-  const blocks = Array.from(content.children);
-  blocks.forEach((block, i) => {
-    if (
-      block.tagName === 'P' &&
-      block.querySelector('.card, figure')
-    ) {
-      const next = blocks[i + 1];
-      if (next) next.classList.add('clear-after-float');
-    }
-  });
-})();
-</script>
-
-<script>
-/* === TOC === */
-(function() {
-  const content = document.getElementById('article-content');
-  const tocNav = document.getElementById('toc-nav');
-  if (!content || !tocNav) return;
-
-  const headings = content.querySelectorAll('h2, h3');
-  if (!headings.length) {
-    document.querySelector('.toc')?.remove();
-    return;
+  .category-card {
+    border: 1px solid #dee2e6;
+    border-radius: .75rem;
+    padding: 1.25rem 1.5rem;
+    background: #fff;
+    height: 100%;
   }
 
-  const ul = document.createElement('ul');
-  let currentH2Li = null;
+  .category-title {
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: .4rem;
+    margin-bottom: .75rem;
+    font-weight: 600;
+  }
 
-  headings.forEach((h, i) => {
-    if (!h.id) h.id = 'section-' + i;
+  .category-description {
+    font-size: .95rem;
+    color: #6c757d;
+    margin-bottom: .75rem;
+  }
 
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = '#' + h.id;
-    a.textContent = h.textContent;
-    li.appendChild(a);
+  .articles-list {
+    columns: 2;
+    column-gap: 1.75rem;
+  }
 
-    if (h.tagName === 'H2') {
-      currentH2Li = li;
-      ul.appendChild(li);
-    } else if (h.tagName === 'H3' && currentH2Li) {
-      let sub = currentH2Li.querySelector('ul');
-      if (!sub) {
-        sub = document.createElement('ul');
-        currentH2Li.appendChild(sub);
-      }
-      sub.appendChild(li);
+  @media (max-width: 768px) {
+    .articles-list {
+      columns: 1;
     }
-  });
+  }
 
-  tocNav.appendChild(ul);
-})();
-</script>
+  .articles-list li {
+    margin-bottom: .35rem;
+    break-inside: avoid;
+  }
+
+  .articles-list a {
+    text-decoration: none;
+  }
+
+  .articles-list a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<div class="container my-5">
+
+  <header class="mb-4">
+    <h1 class="mb-1">Категории</h1>
+    <p class="text-muted">
+      Навигация по статьям энциклопедии
+    </p>
+  </header>
+
+  <div class="row g-4">
+
+    {% for category in site.data.categories %}
+      {% assign cat_posts = site.posts | where_exp: "post", "post.categories contains category.id" %}
+      {% if cat_posts.size > 0 %}
+
+        <div class="col-12 col-lg-6">
+          <section class="category-card" id="{{ category.id }}">
+
+            <h2 class="h5 category-title">
+              {{ category.name }}
+              <span class="text-muted fw-normal">
+                ({{ cat_posts.size }})
+              </span>
+            </h2>
+
+            {% if category.description %}
+              <p class="category-description">
+                {{ category.description }}
+              </p>
+            {% endif %}
+
+            <ul class="list-unstyled articles-list">
+              {% for post in cat_posts %}
+                <li>
+                  <a href="{{ post.url | relative_url }}">
+                    {{ post.title }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+
+          </section>
+        </div>
+
+      {% endif %}
+    {% endfor %}
+
+  </div>
+
+</div>
