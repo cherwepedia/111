@@ -4,66 +4,102 @@ title: Категории
 permalink: /categories/
 ---
 
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet">
+
 <a id="top"></a>
 
-<div class="container">
+<style>
+  .alphabet-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    margin-bottom: 1.5rem;
+  }
 
-  <header class="page-header">
-    <h1 class="page-title">Категории</h1>
-    <p class="page-subtitle">Содержание энциклопедии по категориям и алфавиту</p>
+  .alphabet-bar a {
+    display: inline-block;
+    min-width: 2.2rem;
+    text-align: center;
+    padding: .35rem .5rem;
+    border-radius: .375rem;
+    text-decoration: none;
+    border: 1px solid #dee2e6;
+    color: #0d6efd;
+    font-weight: 500;
+  }
+
+  .alphabet-bar a:hover {
+    background: #e7f1ff;
+  }
+
+  .alphabet-section {
+    margin-bottom: 3rem;
+  }
+
+  .alphabet-section h2 {
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: .25rem;
+    margin-bottom: 1rem;
+  }
+
+  .article-list {
+    columns: 2;
+    column-gap: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .article-list {
+      columns: 1;
+    }
+  }
+
+  .article-list li {
+    margin-bottom: .4rem;
+  }
+
+  .back-to-top {
+    margin-top: 1rem;
+    font-size: .9rem;
+  }
+
+  .category-section {
+    margin-bottom: 3rem;
+  }
+
+  .category-section h2 {
+    border-left: 4px solid #0d6efd;
+    padding-left: .75rem;
+    margin-bottom: .75rem;
+  }
+</style>
+
+<div class="container my-5">
+
+  <header class="mb-4">
+    <h1 class="mb-1">Категории</h1>
+    <p class="text-muted">
+      Алфавитный указатель и навигация по энциклопедии
+    </p>
   </header>
 
   {%- comment -%}
   =========================
-  СОДЕРЖАНИЕ КАТЕГОРИЙ
+  АЛФАВИТ (КИРИЛЛИЦА)
   =========================
   {%- endcomment -%}
 
-  <nav class="categories-toc">
-    <h2>Категории</h2>
-    <ul>
-      {% for category in site.data.categories %}
-        {% assign cat_posts = site.posts | where_exp: "post", "post.categories contains category.id" %}
-        {% if cat_posts.size > 0 %}
-          <li>
-            <a href="#cat-{{ category.id }}">
-              {{ category.name }} ({{ cat_posts.size }})
-            </a>
-          </li>
-        {% endif %}
+  {% assign alphabet = "А,Б,В,Г,Д,Е,Ж,З,И,Й,К,Л,М,Н,О,П,Р,С,Т,У,Ф,Х,Ц,Ч,Ш,Щ,Э,Ю,Я" | split: "," %}
+
+  <nav class="mb-4">
+    <h2 class="h5 mb-2">Алфавитный указатель</h2>
+    <div class="alphabet-bar">
+      {% for letter in alphabet %}
+        <a href="#letter-{{ letter }}">{{ letter }}</a>
       {% endfor %}
-    </ul>
+    </div>
   </nav>
-
-  <hr>
-
-  {%- comment -%}
-  =========================
-  АЛФАВИТНЫЙ ИНДЕКС
-  =========================
-  {%- endcomment -%}
-
-  {% assign letters = "" %}
-  {% for post in site.posts %}
-    {% assign first = post.title | strip | slice: 0, 1 | upcase %}
-    {% unless letters contains first %}
-      {% assign letters = letters | append: first | append: "," %}
-    {% endunless %}
-  {% endfor %}
-  {% assign letters = letters | split: "," | sort %}
-
-  <nav class="alphabet-index">
-    <h2>Алфавитный указатель</h2>
-    <p>
-      {% for letter in letters %}
-        {% if letter != "" %}
-          <a href="#letter-{{ letter }}">{{ letter }}</a>
-        {% endif %}
-      {% endfor %}
-    </p>
-  </nav>
-
-  <hr>
 
   {%- comment -%}
   =========================
@@ -71,56 +107,62 @@ permalink: /categories/
   =========================
   {%- endcomment -%}
 
-  <div class="alphabet-content">
-    {% for letter in letters %}
-      {% if letter != "" %}
-
-        <section id="letter-{{ letter }}">
-          <h2>{{ letter }}</h2>
-
-          <ul>
-            {% for post in site.posts %}
-              {% assign first = post.title | strip | slice: 0, 1 | upcase %}
-              {% if first == letter %}
-                <li>
-                  <a href="{{ post.url | relative_url }}">
-                    {{ post.title }}
-                  </a>
-                </li>
-              {% endif %}
-            {% endfor %}
-          </ul>
-
-          <p class="back-to-top">
-            <a href="#top">↑ Наверх</a>
-          </p>
-        </section>
-
-        <hr>
-
+  {% for letter in alphabet %}
+    {% assign has_posts = false %}
+    {% for post in site.posts %}
+      {% assign first = post.title | strip | slice: 0, 1 | upcase %}
+      {% if first == letter %}
+        {% assign has_posts = true %}
       {% endif %}
     {% endfor %}
-  </div>
+
+    {% if has_posts %}
+      <section id="letter-{{ letter }}" class="alphabet-section">
+        <h2>{{ letter }}</h2>
+
+        <ul class="list-unstyled article-list">
+          {% for post in site.posts %}
+            {% assign first = post.title | strip | slice: 0, 1 | upcase %}
+            {% if first == letter %}
+              <li>
+                <a href="{{ post.url | relative_url }}">
+                  {{ post.title }}
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+
+        <div class="back-to-top">
+          <a href="#top">↑ Наверх</a>
+        </div>
+      </section>
+    {% endif %}
+  {% endfor %}
+
+  <hr class="my-5">
 
   {%- comment -%}
   =========================
-  КАТЕГОРИИ → СТАТЬИ
+  КАТЕГОРИИ
   =========================
   {%- endcomment -%}
 
-  <div class="categories-content">
+  <section>
+    <h2 class="mb-3">Категории</h2>
+
     {% for category in site.data.categories %}
       {% assign cat_posts = site.posts | where_exp: "post", "post.categories contains category.id" %}
       {% if cat_posts.size > 0 %}
 
-        <section id="cat-{{ category.id }}">
-          <h2>{{ category.name }}</h2>
+        <div class="category-section" id="cat-{{ category.id }}">
+          <h2 class="h4">{{ category.name }}</h2>
 
           {% if category.description %}
-            <p>{{ category.description }}</p>
+            <p class="text-muted">{{ category.description }}</p>
           {% endif %}
 
-          <ul>
+          <ul class="list-unstyled">
             {% for post in cat_posts %}
               <li>
                 <a href="{{ post.url | relative_url }}">
@@ -129,16 +171,10 @@ permalink: /categories/
               </li>
             {% endfor %}
           </ul>
-
-          <p class="back-to-top">
-            <a href="#top">↑ Наверх</a>
-          </p>
-        </section>
-
-        <hr>
+        </div>
 
       {% endif %}
     {% endfor %}
-  </div>
+  </section>
 
 </div>
