@@ -4,7 +4,7 @@ title: Категории
 permalink: /categories/
 ---
 
-<div class="page">
+<div class="container">
 
   <header class="page-header">
     <h1 class="page-title">Категории</h1>
@@ -39,64 +39,92 @@ permalink: /categories/
 
   {%- comment -%}
   =====================
-  КАТЕГОРИИ
+  КАТЕГОРИИ В КАРТОЧКАХ
   =====================
   {%- endcomment -%}
 
-  {% for category in site.data.categories %}
-    {% assign posts = site.posts | where_exp: "p", "p.categories contains category.id" %}
-    {% if posts.size > 0 %}
+  <div class="categories-grid">
 
-      <section id="{{ category.id }}" class="category-section">
+    {% for category in site.data.categories %}
+      {% assign posts = site.posts | where_exp: "p", "p.categories contains category.id" %}
+      {% if posts.size > 0 %}
 
-        <h2>{{ category.name }}</h2>
+        <section id="{{ category.id }}" class="category-card">
 
-        {% if category.description %}
-          <div class="category-description">
-            {{ category.description }}
-          </div>
-        {% endif %}
+          <h2 class="category-title">
+            {{ category.name }}
+            <span class="category-count">
+              ({{ posts.size }})
+            </span>
+          </h2>
 
-        <ul class="article-list">
-          {% for post in posts %}
-            <li>
-              <a href="{{ post.url | relative_url }}">
-                {{ post.title }}
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
+          {% if category.description %}
+            <div class="category-description">
+              {{ category.description }}
+            </div>
+          {% endif %}
 
-      </section>
+          <ul class="article-list">
+            {% for post in posts %}
+              <li>
+                <a href="{{ post.url | relative_url }}">
+                  {{ post.title }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
 
-    {% endif %}
-  {% endfor %}
+        </section>
+
+      {% endif %}
+    {% endfor %}
+
+  </div>
 
 </div>
 
 <style>
 /* =======================
-   CATEGORY PAGE TWEAKS
-   (вписывается в общий стиль)
+   GRID
    ======================= */
 
-.category-section {
-  margin-top: var(--space-2xl);
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: var(--space-xl);
+  margin-top: var(--space-xl);
 }
 
-.category-section h2 {
+/* =======================
+   CATEGORY CARD
+   ======================= */
+
+.category-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: var(--space-xl);
+}
+
+/* =======================
+   TITLE
+   ======================= */
+
+.category-title {
   font-family: var(--font-serif);
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: var(--space-md);
-  padding-top: var(--space-lg);
-  border-top: 1px solid var(--color-border-light);
+  margin-bottom: var(--space-sm);
 }
 
-.category-section:first-of-type h2 {
-  border-top: none;
-  padding-top: 0;
+.category-count {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-weight: 400;
 }
+
+/* =======================
+   DESCRIPTION
+   ======================= */
 
 .category-description {
   color: var(--color-text-secondary);
@@ -104,18 +132,20 @@ permalink: /categories/
   margin-bottom: var(--space-md);
 }
 
+/* =======================
+   ARTICLE LIST
+   ======================= */
+
 .article-list {
-  column-count: 3;
-  column-gap: 2.5rem;
+  column-count: 2;
+  column-gap: var(--space-xl);
   padding-left: var(--space-xl);
 }
 
-@media (max-width: 900px) {
-  .article-list { column-count: 2; }
-}
-
 @media (max-width: 600px) {
-  .article-list { column-count: 1; }
+  .article-list {
+    column-count: 1;
+  }
 }
 
 .article-list li {
