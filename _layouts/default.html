@@ -8,11 +8,12 @@
   {% assign page_title = page.title | default: site_name %}
   {% assign full_title = page_title | append: " | " | append: site_name %}
 
-  {% assign page_description = page.intro 
-    | default: site.description 
-    | strip_html 
-    | strip_newlines 
-    | escape 
+  {% assign page_description = page.intro
+    | default: site.description
+    | markdownify
+    | strip_html
+    | strip_newlines
+    | escape
     | truncate: 160 %}
 
   {% assign page_image = page.infobox.image | default: site.og_image %}
