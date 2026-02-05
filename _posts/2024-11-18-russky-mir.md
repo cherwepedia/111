@@ -12,6 +12,7 @@ intro: >
   управляемого, лишённого политической воли и субъектности скота.
 
 infobox:
+  image: "https://i.pinimg.com/736x/e4/5a/15/e45a1591f042bd92ee99a2f6fce4407f.jpg"
   data:
     - label: "Тип"
       value: "идеологическая доктрина"
