@@ -1217,28 +1217,7 @@ button {
 
 
 
-/* ─── Авто-прокрутка + бесконечный цикл ──────────────────────────────── */
-.favorites-track {
-  display: flex;
-  gap: var(--space-lg);
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-  animation: autoScroll 60s linear infinite;           /* 60s — очень медленно; можно 45s–90s */
-  animation-play-state: running;
-  will-change: transform;
-}
 
-.favorites-carousel:hover .favorites-track,
-.favorites-carousel.dragging .favorites-track {
-  animation-play-state: paused;                        /* пауза при наведении / драге */
-}
-
-@keyframes autoScroll {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }               /* -50% потому что контент дублирован */
-}
 
 /* ─── Стрелки — стиль как в статье (.carousel-btn) ───────────────────── */
 .favorites-carousel .carousel-prev,
