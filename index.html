@@ -8,8 +8,8 @@ title: Главная
   <section class="home-hero">
     <h1 class="home-title">Червепедия — Энциклопедия Черветреда</h1>
     <p class="home-subtitle">
-      Добро пожаловать в Червепедию —   энциклопедия  Черветреда.
-      Статьи о людях, событиях и Кинамании.
+      Добро пожаловать в Червепедию — самую полную энциклопедию о мире Черветреда.
+      Здесь собраны статьи о людях, событиях, истоках и политике этого удивительного мира.
     </p>
 
     {% include search.html %}
@@ -51,7 +51,7 @@ title: Главная
           <div class="favorite-content">
             <h3 class="favorite-title">{{ post.title | escape }}</h3>
             <p class="favorite-excerpt">
-              {{ post.intro | default: post.excerpt | markdownify | truncatewords: 5 }}
+              {{ post.intro | default: post.excerpt | markdownify | truncatewords: 15 }}
             </p>
           </div>
         </a>
@@ -188,7 +188,7 @@ title: Главная
           <h3 class="latest-title">{{ post.title | escape }}</h3>
 
           <p class="latest-excerpt">
-            {{ post.intro | default: post.excerpt | markdownify | truncatewords: 15 }}
+            {{ post.intro | default: post.excerpt | markdownify | truncatewords: 25 }}
           </p>
 
           <div class="latest-meta">
@@ -220,245 +220,6 @@ title: Главная
 </script>
 
 <!-- Скрипт для стрелок -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const carousel = document.querySelector('.favorites-carousel');
-  if (!carousel) return;
-
-  const track = carousel.querySelector('.favorites-track');
-  const prevBtn = carousel.querySelector('.carousel-prev');
-  const nextBtn = carousel.querySelector('.carousel-next');
-
-  if (!track || !prevBtn || !nextBtn) return;
-
-  const scrollAmount = track.clientWidth * 0.85;
-
-  prevBtn.addEventListener('click', () => {
-    track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-  });
-
-  nextBtn.addEventListener('click', () => {
-    track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-  });
-});
-</script>
-  <!-- Hero Section -->
-  <section class="home-hero">
-    <h1 class="home-title">Червепедия — Энциклопедия Черветреда</h1>
-    <p class="home-subtitle">
-      Добро пожаловать в Червепедию — самую полную энциклопедию о мире Черветреда.
-      Здесь собраны статьи о людях, событиях, истоках и политике этого удивительного мира.
-    </p>
-
-    {% include search.html %}
-
-    <div class="home-actions">
-      <button class="btn nav-random" id="random-btn">
-        <span>Случайная статья</span>
-      </button>
-      <a href="{{ '/categories/' | relative_url }}" class="btn">
-        <span>Все категории</span>
-      </a>
-    </div>
-  </section>
-
-  <!-- Популярные статьи -->
-  {% assign favorites = site.posts | where: "favorites", true %}
-  {% if favorites.size > 0 %}
-  <section class="home-section">
-    <header class="section-header">
-      <h2 class="section-title">Популярные статьи</h2>
-    </header>
-
-    <div class="favorites-carousel">
-      <button class="carousel-prev" aria-label="Предыдущая">‹</button>
-      <button class="carousel-next" aria-label="Следующая">›</button>
-
-      <div class="favorites-track">
-        {% for post in favorites limit: 10 %}
-        <a href="{{ post.url | relative_url }}" class="favorite-card">
-          {% if post.infobox.image %}
-          <img 
-            src="{{ post.infobox.image | relative_url }}" 
-            alt="{{ post.title | escape }}" 
-            class="favorite-image" 
-            loading="lazy">
-          {% else %}
-          <div class="favorite-image" style="background:#f0f0f0;"></div>
-          {% endif %}
-          <div class="favorite-content">
-            <h3 class="favorite-title">{{ post.title | escape }}</h3>
-            <p class="favorite-excerpt">
-              {{ post.intro | default: post.excerpt | markdownify | truncate: 180 }}
-            </p>
-          </div>
-        </a>
-        {% endfor %}
-      </div>
-    </div>
-
-    <!-- Стили карусели (без изменений, как было у вас) -->
-    <style>
-      .favorites-carousel {
-        position: relative;
-        overflow: hidden;
-        margin: 2.5rem 0 3rem;
-      }
-
-      .favorites-track {
-        display: flex;
-        gap: 1.5rem;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 0.75rem; /* место под скроллбар если появится */
-        scrollbar-width: thin;
-      }
-
-      .favorites-track::-webkit-scrollbar {
-        height: 8px;
-      }
-
-      .favorites-track::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
-      }
-
-      .carousel-prev,
-      .carousel-next {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 48px;
-        height: 48px;
-        background: rgba(0,0,0,0.6);
-        color: white;
-        font-size: 28px;
-        font-weight: bold;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        z-index: 10;
-        opacity: 0;
-        transition: opacity 0.18s ease, background 0.18s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .favorites-carousel:hover .carousel-prev,
-      .favorites-carousel:hover .carousel-next {
-        opacity: 0.9;
-      }
-
-      .carousel-prev:hover,
-      .carousel-next:hover {
-        background: rgba(0,0,0,0.85);
-        opacity: 1;
-      }
-
-      .carousel-prev { left: 12px; }
-      .carousel-next { right: 12px; }
-
-      @media (max-width: 768px) {
-        .carousel-prev,
-        .carousel-next {
-          opacity: 0.75;
-          width: 42px;
-          height: 42px;
-          font-size: 24px;
-        }
-        .carousel-prev { left: 8px; }
-        .carousel-next { right: 8px; }
-      }
-
-      .favorite-card {
-        flex: 0 0 300px;
-        scroll-snap-align: start;
-        background: var(--color-surface, white);
-        border: 1px solid var(--color-border, #e0e0e0);
-        text-decoration: none;
-        color: var(--color-text, #1a1a1a);
-        transition: border-color 0.2s;
-      }
-
-      .favorite-card:hover {
-        border-color: var(--color-accent, #2d2d2d);
-      }
-
-      .favorite-image {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-      }
-
-      .favorite-title {
-        font-weight: 600;
-        margin: 0.75rem 0 0.375rem;
-      }
-
-      .favorite-excerpt {
-        font-size: 0.875rem;
-        color: var(--color-text-secondary, #666);
-        line-height: 1.4;
-      }
-    </style>
-  </section>
-  {% endif %}
-
-  <!-- Последние статьи -->
-  <section class="home-section">
-    <header class="section-header">
-      <h2 class="section-title">Последние статьи</h2>
-      <a href="{{ '/categories/' | relative_url }}" class="section-link">Все статьи →</a>
-    </header>
-
-    <div class="latest-list">
-      {% for post in site.posts limit: 5 %}
-      <a href="{{ post.url | relative_url }}" class="latest-item">
-        {% if post.infobox.image %}
-        <img
-          src="{{ post.infobox.image | relative_url }}"
-          alt="{{ post.title | escape }}"
-          class="latest-image">
-        {% endif %}
-
-        <div class="latest-content">
-          <h3 class="latest-title">{{ post.title | escape }}</h3>
-
-          <p class="latest-excerpt">
-            {{ post.intro | default: post.excerpt | markdownify | truncate: 220 }}
-          </p>
-
-          <div class="latest-meta">
-            {% assign cat = post.categories | first %}
-            {% assign category_data = site.data.categories | where: "id", cat | first %}
-            {{ category_data.name | default: cat }}
-          </div>
-        </div>
-      </a>
-      {% endfor %}
-    </div>
-  </section>
-</div>
-
-<!-- Search Data for JS -->
-<script type="application/json" id="search-data">
-[
-  {% for post in site.posts %}
-  {
-    "title": {{ post.title | jsonify }},
-    "url": {{ post.url | relative_url | jsonify }},
-    "intro": {{ post.intro | default: "" | strip_newlines | jsonify }},
-    "content": {{ post.content | strip_html | truncate: 500 | strip_newlines | jsonify }},
-    "image": {{ post.infobox.image | default: "" | relative_url | jsonify }},
-    "categories": {{ post.categories | jsonify }}
-  }{% unless forloop.last %},{% endunless %}
-  {% endfor %}
-]
-</script>
-
-<!-- Скрипт для стрелок (без изменений) -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const carousel = document.querySelector('.favorites-carousel');
