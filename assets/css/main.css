@@ -1218,53 +1218,70 @@ button {
 
 
 
+.favorites-carousel {
+  position: relative;           /* КРИТИЧЕСКИ важно для абсолютного позиционирования стрелок */
+  overflow: hidden;             /* чтобы стрелки не вылезали за пределы */
+}
 
-/* ─── Стрелки — стиль как в статье (.carousel-btn) ───────────────────── */
 .favorites-carousel .carousel-prev,
 .favorites-carousel .carousel-next {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 44px;
-  height: 44px;
-  background: rgba(0, 0, 0, 0.6);
+  width: 48px;
+  height: 48px;
+  background: rgba(0, 0, 0, 0.65);
   color: white;
-  font-size: 1.8rem;
+  font-size: 1.9rem;
+  font-weight: bold;
   border: none;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transition: opacity var(--transition-fast);
   cursor: pointer;
-  z-index: 5;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.18s ease, background 0.18s ease;
+  user-select: none;
 }
 
 .favorites-carousel:hover .carousel-prev,
-.favorites-carousel:hover .carousel-next {
-  opacity: 0.85;
+.favorites-carousel:hover .carousel-next,
+.favorites-carousel.dragging .carousel-prev,
+.favorites-carousel.dragging .carousel-next {
+  opacity: 0.9;
 }
 
 .favorites-carousel .carousel-prev:hover,
 .favorites-carousel .carousel-next:hover {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.9);
 }
 
 .favorites-carousel .carousel-prev {
-  left: var(--space-md);
+  left: 12px;
 }
 
 .favorites-carousel .carousel-next {
-  right: var(--space-md);
+  right: 12px;
 }
 
-/* Курсор при наведении на трек */
-.favorites-carousel:hover .favorites-track {
-  cursor: grab;
-}
+/* На мобильных устройствах стрелки можно сделать всегда видимыми */
+@media (max-width: 768px) {
+  .favorites-carousel .carousel-prev,
+  .favorites-carousel .carousel-next {
+    opacity: 0.7;
+    width: 42px;
+    height: 42px;
+    font-size: 1.6rem;
+  }
 
-.favorites-carousel.dragging .favorites-track {
-  cursor: grabbing;
+  .favorites-carousel .carousel-prev {
+    left: 8px;
+  }
+
+  .favorites-carousel .carousel-next {
+    right: 8px;
+  }
 }
