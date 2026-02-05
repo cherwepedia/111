@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!track || !prevBtn || !nextBtn) return;
 
-  const scrollAmount = track.clientWidth * 0.85; // ~85% ширины контейнера
+  const scrollAmount = track.clientWidth * 0.85;
 
   prevBtn.addEventListener('click', () => {
     track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
