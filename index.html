@@ -24,7 +24,7 @@ title: Главная
     </div>
   </section>
 
-  <!-- Популярные статьи (карусель без авто-прокрутки) -->
+  <!-- Популярные статьи -->
   {% assign favorites = site.posts | where: "favorites", true %}
   {% if favorites.size > 0 %}
   <section class="home-section">
@@ -51,7 +51,7 @@ title: Главная
           <div class="favorite-content">
             <h3 class="favorite-title">{{ post.title | escape }}</h3>
             <p class="favorite-excerpt">
-              {{ post.intro | default: post.excerpt | truncatewords: 25 }}
+              {{ post.intro | default: post.excerpt | markdownify | truncatewords: 25 }}
             </p>
           </div>
         </a>
@@ -59,7 +59,6 @@ title: Главная
       </div>
     </div>
 
-    <!-- Стили карусели (без анимации) -->
     <style>
       .favorites-carousel {
         position: relative;
@@ -163,7 +162,6 @@ title: Главная
         font-size: 0.875rem;
         color: var(--color-text-secondary, #666);
         line-height: 1.4;
-        white-space: pre-wrap; /* чтобы Markdown переносился корректно */
       }
     </style>
   </section>
@@ -190,7 +188,7 @@ title: Главная
           <h3 class="latest-title">{{ post.title | escape }}</h3>
 
           <p class="latest-excerpt">
-            {{ post.intro | default: post.excerpt | truncatewords: 35 }}
+            {{ post.intro | default: post.excerpt | markdownify | truncatewords: 35 }}
           </p>
 
           <div class="latest-meta">
@@ -205,7 +203,7 @@ title: Главная
   </section>
 </div>
 
-<!-- Search Data for JS -->
+<!-- Search Data -->
 <script type="application/json" id="search-data">
 [
   {% for post in site.posts %}
@@ -221,7 +219,7 @@ title: Главная
 ]
 </script>
 
-<!-- Скрипт для управления стрелками -->
+<!-- Скрипт для стрелок -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const carousel = document.querySelector('.favorites-carousel');
