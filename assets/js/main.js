@@ -1,6 +1,6 @@
 /**
  * Червепедия — Main JavaScript
- * Mobile Menu, Lightbox, Categories Accordion, Favorites Carousel (drag + touch + buttons)
+ * Mobile Menu, Lightbox, Categories Accordion, Favorites Carousel (auto slow infinite + drag + touch + buttons)
  */
 (function () {
   'use strict';
@@ -130,32 +130,24 @@
       this.isDragging = false;
       this.startX = 0;
       this.scrollLeft = 0;
-      this.savedSnapType = '';
 
       this.init();
     }
 
     init() {
-      // Кнопки
+      // Кнопки (смещение на ширину видимой области)
       this.prevBtn?.addEventListener('click', () => this.scrollBy(-this.track.clientWidth));
       this.nextBtn?.addEventListener('click', () => this.scrollBy(this.track.clientWidth));
 
-      // ─── Mouse drag ───────────────────────────────────────
-      this.track.addEventListener('mousedown', (e) => {
-        this.startDragging(e);
-      });
+      // Drag / swipe
+      this.track.addEventListener('mousedown',  e => this.startDragging(e));
+      this.track.addEventListener('touchstart', e => this.startDragging(e), { passive: false });
 
-      // ─── Touch drag ───────────────────────────────────────
-      this.track.addEventListener('touchstart', (e) => {
-        this.startDragging(e);
-      }, { passive: false });
-
-      // Общие события перемещения и окончания (на document — чтобы не терялись при быстром движении)
-      document.addEventListener('mousemove', (e) => this.onMove(e));
+      document.addEventListener('mousemove', e => this.onMove(e));
       document.addEventListener('mouseup',   () => this.stopDragging());
       document.addEventListener('mouseleave', () => this.stopDragging());
 
-      document.addEventListener('touchmove', (e) => this.onMove(e), { passive: false });
+      document.addEventListener('touchmove', e => this.onMove(e), { passive: false });
       document.addEventListener('touchend',   () => this.stopDragging());
       document.addEventListener('touchcancel', () => this.stopDragging());
     }
@@ -163,16 +155,13 @@
     startDragging(e) {
       this.isDragging = true;
       this.container.classList.add('dragging');
-
-      // Отключаем snap во время перетаскивания
-      this.savedSnapType = getComputedStyle(this.track).scrollSnapType;
-      this.track.style.scrollSnapType = 'none';
+      this.track.style.animationPlayState = 'paused'; // останавливаем авто-анимацию
 
       const clientX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
       this.startX = clientX - this.track.getBoundingClientRect().left;
       this.scrollLeft = this.track.scrollLeft;
 
-      e.preventDefault(); // предотвращаем выделение текста и скролл страницы
+      e.preventDefault();
     }
 
     onMove(e) {
@@ -181,7 +170,7 @@
 
       const clientX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
       const x = clientX - this.track.getBoundingClientRect().left;
-      const walk = (x - this.startX) * 2.2; // коэффициент чувствительности — можно подстроить
+      const walk = (x - this.startX) * 2.2;
 
       this.track.scrollLeft = this.scrollLeft - walk;
     }
@@ -190,19 +179,11 @@
       if (!this.isDragging) return;
       this.isDragging = false;
       this.container.classList.remove('dragging');
-
-      // Возвращаем snapping
-      this.track.style.scrollSnapType = this.savedSnapType || 'x mandatory';
-
-      // Опционально: можно добавить лёгкую анимацию подтяжки к карточке,
-      // но в большинстве случаев браузер сам хорошо справляется
+      this.track.style.animationPlayState = 'running'; // возобновляем авто-прокрутку
     }
 
     scrollBy(amount) {
-      this.track.scrollBy({
-        left: amount,
-        behavior: 'smooth'
-      });
+      this.track.scrollBy({ left: amount, behavior: 'smooth' });
     }
   }
 
@@ -212,13 +193,9 @@
     new Lightbox();
     new CategoriesAccordion();
 
-    // Запускаем карусель «Избранные статьи»
     const favorites = document.querySelector('.favorites-carousel');
     if (favorites) {
       new FavoritesCarousel(favorites);
     }
-
-    // Если в будущем будет несколько каруселей — можно раскомментировать:
-    // document.querySelectorAll('.favorites-carousel').forEach(el => new FavoritesCarousel(el));
   });
 })();
