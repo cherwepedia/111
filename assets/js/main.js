@@ -1,8 +1,8 @@
 /**
- * Червепедия - Main JavaScript
- * Mobile Menu, Lightbox, Categories, Carousel (mouse + touch)
+ * Червепедия — Main JavaScript
+ * Mobile Menu, Lightbox, Categories Accordion, Favorites Carousel (drag + touch + buttons)
  */
-(function() {
+(function () {
   'use strict';
 
   // ==================== MOBILE MENU ====================
@@ -57,17 +57,10 @@
 
       document.addEventListener('keydown', (e) => {
         if (!this.lightbox.classList.contains('active')) return;
-
         switch (e.key) {
-          case 'Escape':
-            this.close();
-            break;
-          case 'ArrowLeft':
-            this.prev();
-            break;
-          case 'ArrowRight':
-            this.next();
-            break;
+          case 'Escape': this.close(); break;
+          case 'ArrowLeft': this.prev(); break;
+          case 'ArrowRight': this.next(); break;
         }
       });
     }
@@ -99,7 +92,7 @@
       if (!img) return;
 
       this.image.src = img.src;
-      this.image.alt = img.alt;
+      this.image.alt = img.alt || '';
       this.caption.textContent = img.alt || '';
       this.currentSpan.textContent = this.currentIndex + 1;
       this.totalSpan.textContent = this.images.length;
@@ -115,7 +108,7 @@
     constructor() {
       document.querySelectorAll('.category-header').forEach(header => {
         const group = header.closest('.category-group');
-        if (group.id !== 'politika') group.classList.add('open');
+        if (group?.id !== 'politika') group.classList.add('open');
 
         header.addEventListener('click', () => {
           group.classList.toggle('open');
@@ -124,86 +117,108 @@
     }
   }
 
-  // ==================== CAROUSEL (MOUSE + TOUCH) ====================
-  class Carousel {
+  // ==================== FAVORITES CAROUSEL ====================
+  class FavoritesCarousel {
     constructor(container) {
       this.container = container;
-      this.track = container.querySelector('.carousel-track');
-      this.slides = container.querySelectorAll('.carousel-slide');
+      this.track = container.querySelector('.favorites-track');
+      if (!this.track) return;
+
       this.prevBtn = container.querySelector('.carousel-prev');
       this.nextBtn = container.querySelector('.carousel-next');
 
-      this.currentIndex = 0;
+      this.isDragging = false;
+      this.startX = 0;
+      this.scrollLeft = 0;
+      this.savedSnapType = '';
 
       this.init();
     }
 
     init() {
-      // кнопки
-      this.prevBtn?.addEventListener('click', () => this.prev());
-      this.nextBtn?.addEventListener('click', () => this.next());
+      // Кнопки
+      this.prevBtn?.addEventListener('click', () => this.scrollBy(-this.track.clientWidth));
+      this.nextBtn?.addEventListener('click', () => this.scrollBy(this.track.clientWidth));
 
-      // ================== MOUSE DRAG ==================
-      let isDown = false;
-      let startX, scrollLeft;
-
-      this.track.addEventListener('mousedown', e => {
-        isDown = true;
-        this.container.classList.add('dragging');
-        startX = e.pageX - this.container.offsetLeft;
-        scrollLeft = this.track.scrollLeft;
+      // ─── Mouse drag ───────────────────────────────────────
+      this.track.addEventListener('mousedown', (e) => {
+        this.startDragging(e);
       });
 
-      this.track.addEventListener('mouseleave', () => {
-        isDown = false;
-        this.container.classList.remove('dragging');
-      });
+      // ─── Touch drag ───────────────────────────────────────
+      this.track.addEventListener('touchstart', (e) => {
+        this.startDragging(e);
+      }, { passive: false });
 
-      this.track.addEventListener('mouseup', () => {
-        isDown = false;
-        this.container.classList.remove('dragging');
-      });
+      // Общие события перемещения и окончания (на document — чтобы не терялись при быстром движении)
+      document.addEventListener('mousemove', (e) => this.onMove(e));
+      document.addEventListener('mouseup',   () => this.stopDragging());
+      document.addEventListener('mouseleave', () => this.stopDragging());
 
-      this.track.addEventListener('mousemove', e => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - this.container.offsetLeft;
-        const walk = (x - startX) * 2; // скорость прокрутки
-        this.track.scrollLeft = scrollLeft - walk;
-      });
-
-      // ================== TOUCH ==================
-      let touchStartX = 0;
-      this.track.addEventListener('touchstart', e => {
-        touchStartX = e.touches[0].clientX;
-      }, { passive: true });
-
-      this.track.addEventListener('touchend', e => {
-        const diff = touchStartX - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 20) {
-          this.track.scrollBy({ left: diff, behavior: 'smooth' });
-        }
-      });
+      document.addEventListener('touchmove', (e) => this.onMove(e), { passive: false });
+      document.addEventListener('touchend',   () => this.stopDragging());
+      document.addEventListener('touchcancel', () => this.stopDragging());
     }
 
-    prev() {
-      this.track.scrollBy({ left: -this.track.clientWidth, behavior: 'smooth' });
+    startDragging(e) {
+      this.isDragging = true;
+      this.container.classList.add('dragging');
+
+      // Отключаем snap во время перетаскивания
+      this.savedSnapType = getComputedStyle(this.track).scrollSnapType;
+      this.track.style.scrollSnapType = 'none';
+
+      const clientX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+      this.startX = clientX - this.track.getBoundingClientRect().left;
+      this.scrollLeft = this.track.scrollLeft;
+
+      e.preventDefault(); // предотвращаем выделение текста и скролл страницы
     }
 
-    next() {
-      this.track.scrollBy({ left: this.track.clientWidth, behavior: 'smooth' });
+    onMove(e) {
+      if (!this.isDragging) return;
+      e.preventDefault();
+
+      const clientX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+      const x = clientX - this.track.getBoundingClientRect().left;
+      const walk = (x - this.startX) * 2.2; // коэффициент чувствительности — можно подстроить
+
+      this.track.scrollLeft = this.scrollLeft - walk;
+    }
+
+    stopDragging() {
+      if (!this.isDragging) return;
+      this.isDragging = false;
+      this.container.classList.remove('dragging');
+
+      // Возвращаем snapping
+      this.track.style.scrollSnapType = this.savedSnapType || 'x mandatory';
+
+      // Опционально: можно добавить лёгкую анимацию подтяжки к карточке,
+      // но в большинстве случаев браузер сам хорошо справляется
+    }
+
+    scrollBy(amount) {
+      this.track.scrollBy({
+        left: amount,
+        behavior: 'smooth'
+      });
     }
   }
 
-  // ==================== INIT ====================
+  // ==================== ИНИЦИАЛИЗАЦИЯ ====================
   document.addEventListener('DOMContentLoaded', () => {
     new MobileMenu();
     new Lightbox();
     new CategoriesAccordion();
 
-    // Все карусели на странице
-    document.querySelectorAll('.carousel-container').forEach(container => {
-      new Carousel(container);
-    });
+    // Запускаем карусель «Избранные статьи»
+    const favorites = document.querySelector('.favorites-carousel');
+    if (favorites) {
+      new FavoritesCarousel(favorites);
+    }
+
+    // Если в будущем будет несколько каруселей — можно раскомментировать:
+    // document.querySelectorAll('.favorites-carousel').forEach(el => new FavoritesCarousel(el));
   });
 })();
