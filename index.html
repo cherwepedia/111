@@ -51,7 +51,7 @@ title: Главная
           <div class="favorite-content">
             <h3 class="favorite-title">{{ post.title | escape }}</h3>
             <p class="favorite-excerpt">
-              {{ post.intro | default: post.excerpt | truncatewords: 25 }}
+              {{ post.intro | default: post.excerpt | markdownify | truncatewords_html: 25 }}
             </p>
           </div>
         </a>
@@ -68,7 +68,8 @@ title: Главная
       .carousel-prev, .carousel-next { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; background: rgba(0,0,0,0.6); color: white; font-size: 28px; font-weight: bold; border: none; border-radius: 50%; cursor: pointer; z-index: 10; opacity: 0; transition: opacity 0.18s ease, background 0.18s ease; display: flex; align-items: center; justify-content: center; }
       .favorites-carousel:hover .carousel-prev, .favorites-carousel:hover .carousel-next { opacity: 0.9; }
       .carousel-prev:hover, .carousel-next:hover { background: rgba(0,0,0,0.85); opacity: 1; }
-      .carousel-prev { left: 12px; } .carousel-next { right: 12px; }
+      .carousel-prev { left: 12px; }
+      .carousel-next { right: 12px; }
       @media (max-width: 768px) { .carousel-prev, .carousel-next { opacity: 0.75; width: 42px; height: 42px; font-size: 24px; } .carousel-prev { left: 8px; } .carousel-next { right: 8px; } }
       .favorite-card { flex: 0 0 300px; scroll-snap-align: start; background: var(--color-surface, white); border: 1px solid var(--color-border, #e0e0e0); text-decoration: none; color: var(--color-text, #1a1a1a); transition: border-color 0.2s; }
       .favorite-card:hover { border-color: var(--color-accent, #2d2d2d); }
@@ -100,7 +101,7 @@ title: Главная
           <h3 class="latest-title">{{ post.title | escape }}</h3>
 
           <p class="latest-excerpt">
-            {{ post.intro | default: post.excerpt | truncatewords: 35 }}
+            {{ post.intro | default: post.excerpt | markdownify | truncatewords_html: 35 }}
           </p>
 
           <div class="latest-meta">
@@ -123,7 +124,7 @@ title: Главная
     "title": {{ post.title | jsonify }},
     "url": {{ post.url | relative_url | jsonify }},
     "intro": {{ post.intro | default: "" | strip_newlines | jsonify }},
-    "content": {{ post.content | truncate: 500 | strip_newlines | jsonify }},
+    "content": {{ post.content | strip_html | truncate: 500 | strip_newlines | jsonify }},
     "image": {{ post.infobox.image | default: "" | relative_url | jsonify }},
     "categories": {{ post.categories | jsonify }}
   }{% unless forloop.last %},{% endunless %}
