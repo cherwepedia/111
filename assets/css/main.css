@@ -1,11 +1,17 @@
+ /**
+ * Червепедия - Main JavaScript
+ * Lightbox, Carousel, Categories, Mobile Menu
+ */
+
 (function() {
   'use strict';
 
-  // ==================== MOBILE MENU ====================
+  // Mobile Menu
   class MobileMenu {
     constructor() {
-      this.toggle = document.querySelector('.mobile-menu-toggle');
-      this.nav = document.querySelector('.mobile-nav');
+      this.toggle = document.getElementById('mobile-menu-toggle');
+      this.nav = document.getElementById('mobile-nav');
+
       if (!this.toggle || !this.nav) return;
 
       this.toggle.addEventListener('click', () => this.toggleMenu());
@@ -17,10 +23,10 @@
     }
   }
 
-  // ==================== LIGHTBOX ====================
+  // Lightbox
   class Lightbox {
     constructor() {
-      this.lightbox = document.querySelector('.lightbox');
+      this.lightbox = document.getElementById('lightbox');
       if (!this.lightbox) return;
 
       this.overlay = this.lightbox.querySelector('.lightbox-overlay');
@@ -29,7 +35,8 @@
       this.closeBtn = this.lightbox.querySelector('.lightbox-close');
       this.prevBtn = this.lightbox.querySelector('.lightbox-prev');
       this.nextBtn = this.lightbox.querySelector('.lightbox-next');
-      this.counter = this.lightbox.querySelector('.lightbox-counter');
+      this.currentSpan = this.lightbox.querySelector('.lightbox-current');
+      this.totalSpan = this.lightbox.querySelector('.lightbox-total');
 
       this.images = [];
       this.currentIndex = 0;
@@ -38,24 +45,32 @@
     }
 
     init() {
-      this.images = Array.from(document.querySelectorAll('[data-lightbox]'));
-      if (!this.images.length) return;
-
-      this.images.forEach((img, index) => {
+      document.querySelectorAll('[data-lightbox]').forEach((img, index) => {
         img.style.cursor = 'pointer';
         img.addEventListener('click', () => this.open(index));
       });
 
-      this.closeBtn?.addEventListener('click', () => this.close());
-      this.overlay?.addEventListener('click', () => this.close());
-      this.prevBtn?.addEventListener('click', () => this.prev());
-      this.nextBtn?.addEventListener('click', () => this.next());
+      this.images = Array.from(document.querySelectorAll('[data-lightbox]'));
+
+      this.closeBtn.addEventListener('click', () => this.close());
+      this.overlay.addEventListener('click', () => this.close());
+      this.prevBtn.addEventListener('click', () => this.prev());
+      this.nextBtn.addEventListener('click', () => this.next());
 
       document.addEventListener('keydown', (e) => {
         if (!this.lightbox.classList.contains('active')) return;
-        if (e.key === 'Escape') this.close();
-        if (e.key === 'ArrowLeft') this.prev();
-        if (e.key === 'ArrowRight') this.next();
+
+        switch (e.key) {
+          case 'Escape':
+            this.close();
+            break;
+          case 'ArrowLeft':
+            this.prev();
+            break;
+          case 'ArrowRight':
+            this.next();
+            break;
+        }
       });
     }
 
@@ -83,91 +98,113 @@
 
     updateImage() {
       const img = this.images[this.currentIndex];
-      if (!img) return;
-
       this.image.src = img.src;
-      this.image.alt = img.alt || '';
+      this.image.alt = img.alt;
       this.caption.textContent = img.alt || '';
-      if (this.counter) this.counter.textContent = `${this.currentIndex + 1} / ${this.images.length}`;
+      this.currentSpan.textContent = this.currentIndex + 1;
+      this.totalSpan.textContent = this.images.length;
 
       const showNav = this.images.length > 1;
-      if (this.prevBtn) this.prevBtn.style.display = showNav ? '' : 'none';
-      if (this.nextBtn) this.nextBtn.style.display = showNav ? '' : 'none';
+      this.prevBtn.style.display = showNav ? '' : 'none';
+      this.nextBtn.style.display = showNav ? '' : 'none';
     }
   }
 
-  // ==================== CATEGORIES ACCORDION ====================
+  // Carousel
+  class Carousel {
+    constructor(element) {
+      this.container = element;
+      this.track = element.querySelector('.carousel-track');
+      this.slides = element.querySelectorAll('.carousel-slide');
+      this.prevBtn = element.querySelector('.carousel-prev');
+      this.nextBtn = element.querySelector('.carousel-next');
+      this.dots = element.querySelectorAll('.carousel-dot');
+      this.caption = element.closest('.article-carousel')?.querySelector('.carousel-caption');
+
+      this.currentIndex = 0;
+      this.captions = [];
+
+      this.slides.forEach(slide => {
+        const img = slide.querySelector('img');
+        this.captions.push(img?.alt || '');
+      });
+
+      this.init();
+    }
+
+    init() {
+      this.prevBtn?.addEventListener('click', () => this.prev());
+      this.nextBtn?.addEventListener('click', () => this.next());
+
+      this.dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => this.goTo(index));
+      });
+
+      let startX = 0;
+      let endX = 0;
+
+      this.track.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+
+      this.track.addEventListener('touchend', (e) => {
+        endX = e.changedTouches[0].clientX;
+        const diff = startX - endX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) this.next();
+          else this.prev();
+        }
+      }, { passive: true });
+    }
+
+    prev() {
+      this.goTo((this.currentIndex - 1 + this.slides.length) % this.slides.length);
+    }
+
+    next() {
+      this.goTo((this.currentIndex + 1) % this.slides.length);
+    }
+
+    goTo(index) {
+      this.currentIndex = index;
+      this.track.style.transform = `translateX(-${index * 100}%)`;
+
+      this.dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+
+      if (this.caption && this.captions[index]) {
+        this.caption.textContent = this.captions[index];
+      }
+    }
+  }
+
+  // Categories Accordion
   class CategoriesAccordion {
     constructor() {
       document.querySelectorAll('.category-header').forEach(header => {
         const group = header.closest('.category-group');
-        if (!group) return;
-        // по умолчанию все кроме id "politika" открыты
-        if (group.id !== 'politika') group.classList.add('open');
 
-        header.addEventListener('click', () => group.classList.toggle('open'));
+        // По умолчанию открываем все, кроме политики
+        if (group.id !== 'politika') {
+          group.classList.add('open');
+        }
+
+        header.addEventListener('click', () => {
+          group.classList.toggle('open');
+        });
       });
     }
   }
 
-  // ==================== FAVORITES CAROUSEL ====================
-  class FavoritesCarousel {
-    constructor(trackSelector) {
-      this.track = document.querySelector(trackSelector);
-      if (!this.track) return;
-
-      this.isDown = false;
-      this.startX = 0;
-      this.scrollLeft = 0;
-
-      // MOUSE EVENTS
-      this.track.addEventListener('mousedown', (e) => {
-        this.isDown = true;
-        this.track.classList.add('dragging');
-        this.startX = e.pageX - this.track.offsetLeft;
-        this.scrollLeft = this.track.scrollLeft;
-      });
-
-      this.track.addEventListener('mouseleave', () => {
-        this.isDown = false;
-        this.track.classList.remove('dragging');
-      });
-
-      this.track.addEventListener('mouseup', () => {
-        this.isDown = false;
-        this.track.classList.remove('dragging');
-      });
-
-      this.track.addEventListener('mousemove', (e) => {
-        if (!this.isDown) return;
-        e.preventDefault();
-        const x = e.pageX - this.track.offsetLeft;
-        const walk = (x - this.startX) * 2; // скорость прокрутки
-        this.track.scrollLeft = this.scrollLeft - walk;
-      });
-
-      // TOUCH EVENTS
-      let touchStartX = 0;
-      let scrollStartX = 0;
-
-      this.track.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        scrollStartX = this.track.scrollLeft;
-      }, { passive: true });
-
-      this.track.addEventListener('touchmove', (e) => {
-        const x = e.touches[0].clientX;
-        const walk = (touchStartX - x) * 2;
-        this.track.scrollLeft = scrollStartX + walk;
-      }, { passive: true });
-    }
-  }
-
-  // ==================== INIT ====================
+  // Initialize everything
   document.addEventListener('DOMContentLoaded', () => {
     new MobileMenu();
     new Lightbox();
     new CategoriesAccordion();
-    new FavoritesCarousel('.favorites-track');
+
+    document.querySelectorAll('.carousel-container').forEach(el => {
+      new Carousel(el);
+    });
   });
 })();
