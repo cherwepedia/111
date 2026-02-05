@@ -24,42 +24,166 @@ title: Главная
     </div>
   </section>
 
-  <!-- Favorites Carousel -->
+  <!-- Favorites Carousel (Популярные статьи) -->
   {% assign favorites = site.posts | where: "favorites", true %}
   {% if favorites.size > 0 %}
   <section class="home-section">
     <header class="section-header">
-      <h2 class="section-title">Избранные статьи</h2>
+      <h2 class="section-title">Популярные статьи</h2>
     </header>
 
     <div class="favorites-carousel">
+      <!-- Навигационные стрелки -->
+      <button class="carousel-prev" aria-label="Предыдущая статья">‹</button>
+      <button class="carousel-next" aria-label="Следующая статья">›</button>
+
       <div class="favorites-track">
+        <!-- Первая копия карточек -->
         {% for post in favorites limit: 10 %}
         <a href="{{ post.url | relative_url }}" class="favorite-card">
           {% if post.infobox.image %}
-          <img
-            src="{{ post.infobox.image | relative_url }}"
-            alt="{{ post.title }}"
-            class="favorite-image">
+          <img 
+            src="{{ post.infobox.image | relative_url }}" 
+            alt="{{ post.title | escape }}" 
+            class="favorite-image" 
+            loading="lazy">
           {% else %}
-          <div class="favorite-image" style="background: #eee;"></div>
+          <div class="favorite-image" style="background:#f0f0f0;"></div>
           {% endif %}
-
           <div class="favorite-content">
-            <h3 class="favorite-title">{{ post.title }}</h3>
-
+            <h3 class="favorite-title">{{ post.title | escape }}</h3>
             <p class="favorite-excerpt">
-              {{ post.intro
-                | truncate: 100
-                | markdownify
-                | remove: '<p>'
-                | remove: '</p>' }}
+              {{ post.intro | default: post.excerpt | truncatewords: 25 | strip_html }}
+            </p>
+          </div>
+        </a>
+        {% endfor %}
+
+        <!-- Вторая копия (для бесконечной анимации) -->
+        {% for post in favorites limit: 10 %}
+        <a href="{{ post.url | relative_url }}" class="favorite-card">
+          {% if post.infobox.image %}
+          <img 
+            src="{{ post.infobox.image | relative_url }}" 
+            alt="{{ post.title | escape }}" 
+            class="favorite-image" 
+            loading="lazy">
+          {% else %}
+          <div class="favorite-image" style="background:#f0f0f0;"></div>
+          {% endif %}
+          <div class="favorite-content">
+            <h3 class="favorite-title">{{ post.title | escape }}</h3>
+            <p class="favorite-excerpt">
+              {{ post.intro | default: post.excerpt | truncatewords: 25 | strip_html }}
             </p>
           </div>
         </a>
         {% endfor %}
       </div>
     </div>
+
+    <!-- Встроенные стили для карусели -->
+    <style>
+      .favorites-carousel {
+        position: relative;
+        overflow: hidden;
+        margin: var(--space-2xl, 3rem) 0;
+        padding: 0 var(--space-md, 1rem);
+      }
+
+      .favorites-track {
+        display: flex;
+        gap: var(--space-lg, 1.5rem);
+        width: max-content;
+        animation: infiniteScroll 80s linear infinite;
+        animation-play-state: running;
+        will-change: transform;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+      }
+
+      @keyframes infiniteScroll {
+        0%   { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+
+      .favorites-carousel:hover .favorites-track,
+      .favorites-carousel.dragging .favorites-track {
+        animation-play-state: paused;
+      }
+
+      /* Стрелки */
+      .carousel-prev,
+      .carousel-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 52px;
+        height: 52px;
+        background: rgba(0,0,0,0.6);
+        color: white;
+        font-size: 32px;
+        font-weight: bold;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 0.2s ease, background 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .favorites-carousel:hover .carousel-prev,
+      .favorites-carousel:hover .carousel-next {
+        opacity: 0.92;
+      }
+
+      .carousel-prev:hover,
+      .carousel-next:hover {
+        background: rgba(0,0,0,0.9);
+        opacity: 1;
+      }
+
+      .carousel-prev { left: 16px; }
+      .carousel-next { right: 16px; }
+
+      /* Мобильные устройства — стрелки всегда видны */
+      @media (max-width: 768px) {
+        .carousel-prev,
+        .carousel-next {
+          opacity: 0.8;
+          width: 44px;
+          height: 44px;
+          font-size: 26px;
+        }
+        .carousel-prev { left: 10px; }
+        .carousel-next { right: 10px; }
+      }
+
+      /* Дополнительные стили карточек (если не заданы глобально) */
+      .favorite-card {
+        flex: 0 0 300px;
+        scroll-snap-align: start;
+        background: var(--color-surface, #ffffff);
+        border: 1px solid var(--color-border, #e0e0e0);
+        text-decoration: none;
+        color: var(--color-text, #1a1a1a);
+        transition: border-color 0.2s ease;
+      }
+
+      .favorite-card:hover {
+        border-color: var(--color-accent, #2d2d2d);
+      }
+
+      .favorite-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+      }
+    </style>
   </section>
   {% endif %}
 
@@ -76,19 +200,15 @@ title: Главная
         {% if post.infobox.image %}
         <img
           src="{{ post.infobox.image | relative_url }}"
-          alt="{{ post.title }}"
+          alt="{{ post.title | escape }}"
           class="latest-image">
         {% endif %}
 
         <div class="latest-content">
-          <h3 class="latest-title">{{ post.title }}</h3>
+          <h3 class="latest-title">{{ post.title | escape }}</h3>
 
           <p class="latest-excerpt">
-            {{ post.intro
-              | truncate: 150
-              | markdownify
-              | remove: '<p>'
-              | remove: '</p>' }}
+            {{ post.intro | default: post.excerpt | truncatewords: 35 | strip_html }}
           </p>
 
           <div class="latest-meta">
