@@ -51,7 +51,7 @@ title: Главная
           <div class="favorite-content">
             <h3 class="favorite-title">{{ post.title | escape }}</h3>
             <p class="favorite-excerpt">
-              {{ post.intro | default: post.excerpt | markdownify | truncatewords: 25 }}
+              {{ post.intro | default: post.excerpt | markdownify | truncate: 180 }}
             </p>
           </div>
         </a>
@@ -59,6 +59,7 @@ title: Главная
       </div>
     </div>
 
+    <!-- Стили карусели (без изменений, как было у вас) -->
     <style>
       .favorites-carousel {
         position: relative;
@@ -72,7 +73,7 @@ title: Главная
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
-        padding-bottom: 0.75rem;
+        padding-bottom: 0.75rem; /* место под скроллбар если появится */
         scrollbar-width: thin;
       }
 
@@ -188,7 +189,7 @@ title: Главная
           <h3 class="latest-title">{{ post.title | escape }}</h3>
 
           <p class="latest-excerpt">
-            {{ post.intro | default: post.excerpt | markdownify | truncatewords: 35 }}
+            {{ post.intro | default: post.excerpt | markdownify | truncate: 220 }}
           </p>
 
           <div class="latest-meta">
@@ -203,7 +204,7 @@ title: Главная
   </section>
 </div>
 
-<!-- Search Data -->
+<!-- Search Data for JS -->
 <script type="application/json" id="search-data">
 [
   {% for post in site.posts %}
@@ -219,7 +220,7 @@ title: Главная
 ]
 </script>
 
-<!-- Скрипт для стрелок -->
+<!-- Скрипт для стрелок (без изменений) -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const carousel = document.querySelector('.favorites-carousel');
