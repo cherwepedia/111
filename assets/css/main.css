@@ -1213,3 +1213,79 @@ button {
   display: table;
   clear: both;
 }
+
+
+
+
+/* ─── Авто-прокрутка + бесконечный цикл ──────────────────────────────── */
+.favorites-track {
+  display: flex;
+  gap: var(--space-lg);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  animation: autoScroll 60s linear infinite;           /* 60s — очень медленно; можно 45s–90s */
+  animation-play-state: running;
+  will-change: transform;
+}
+
+.favorites-carousel:hover .favorites-track,
+.favorites-carousel.dragging .favorites-track {
+  animation-play-state: paused;                        /* пауза при наведении / драге */
+}
+
+@keyframes autoScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }               /* -50% потому что контент дублирован */
+}
+
+/* ─── Стрелки — стиль как в статье (.carousel-btn) ───────────────────── */
+.favorites-carousel .carousel-prev,
+.favorites-carousel .carousel-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 1.8rem;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  cursor: pointer;
+  z-index: 5;
+}
+
+.favorites-carousel:hover .carousel-prev,
+.favorites-carousel:hover .carousel-next {
+  opacity: 0.85;
+}
+
+.favorites-carousel .carousel-prev:hover,
+.favorites-carousel .carousel-next:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.favorites-carousel .carousel-prev {
+  left: var(--space-md);
+}
+
+.favorites-carousel .carousel-next {
+  right: var(--space-md);
+}
+
+/* Курсор при наведении на трек */
+.favorites-carousel:hover .favorites-track {
+  cursor: grab;
+}
+
+.favorites-carousel.dragging .favorites-track {
+  cursor: grabbing;
+}
