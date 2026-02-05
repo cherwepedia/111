@@ -1,30 +1,27 @@
 /**
  * Червепедия - Main JavaScript
- * Lightbox, Carousel (touch + mouse), Categories, Mobile Menu
+ * Mobile Menu, Lightbox, Categories, Carousel (mouse + touch)
  */
-
 (function() {
   'use strict';
 
-  // --------------------
-  // Mobile Menu
-  // --------------------
+  // ==================== MOBILE MENU ====================
   class MobileMenu {
     constructor() {
       this.toggle = document.getElementById('mobile-menu-toggle');
       this.nav = document.getElementById('mobile-nav');
       if (!this.toggle || !this.nav) return;
+
       this.toggle.addEventListener('click', () => this.toggleMenu());
     }
+
     toggleMenu() {
       this.nav.classList.toggle('active');
       this.toggle.classList.toggle('active');
     }
   }
 
-  // --------------------
-  // Lightbox
-  // --------------------
+  // ==================== LIGHTBOX ====================
   class Lightbox {
     constructor() {
       this.lightbox = document.getElementById('lightbox');
@@ -53,18 +50,24 @@
 
       this.images = Array.from(document.querySelectorAll('[data-lightbox]'));
 
-      this.closeBtn.addEventListener('click', () => this.close());
-      this.overlay.addEventListener('click', () => this.close());
-      this.prevBtn.addEventListener('click', () => this.prev());
-      this.nextBtn.addEventListener('click', () => this.next());
+      this.closeBtn?.addEventListener('click', () => this.close());
+      this.overlay?.addEventListener('click', () => this.close());
+      this.prevBtn?.addEventListener('click', () => this.prev());
+      this.nextBtn?.addEventListener('click', () => this.next());
 
       document.addEventListener('keydown', (e) => {
         if (!this.lightbox.classList.contains('active')) return;
 
         switch (e.key) {
-          case 'Escape': this.close(); break;
-          case 'ArrowLeft': this.prev(); break;
-          case 'ArrowRight': this.next(); break;
+          case 'Escape':
+            this.close();
+            break;
+          case 'ArrowLeft':
+            this.prev();
+            break;
+          case 'ArrowRight':
+            this.next();
+            break;
         }
       });
     }
@@ -93,6 +96,8 @@
 
     updateImage() {
       const img = this.images[this.currentIndex];
+      if (!img) return;
+
       this.image.src = img.src;
       this.image.alt = img.alt;
       this.caption.textContent = img.alt || '';
@@ -105,131 +110,100 @@
     }
   }
 
-  // --------------------
-  // Carousel (touch + mouse drag)
-  // --------------------
-  class Carousel {
-    constructor(element) {
-      this.container = element;
-      this.track = element.querySelector('.carousel-track');
-      this.slides = element.querySelectorAll('.carousel-slide');
-      this.prevBtn = element.querySelector('.carousel-prev');
-      this.nextBtn = element.querySelector('.carousel-next');
-      this.dots = element.querySelectorAll('.carousel-dot');
-      this.caption = element.closest('.article-carousel')?.querySelector('.carousel-caption');
-
-      this.currentIndex = 0;
-      this.captions = [];
-
-      this.slides.forEach(slide => {
-        const img = slide.querySelector('img');
-        this.captions.push(img?.alt || '');
-      });
-
-      this.isDragging = false;
-      this.startX = 0;
-      this.scrollStart = 0;
-
-      this.init();
-    }
-
-    init() {
-      this.prevBtn?.addEventListener('click', () => this.prev());
-      this.nextBtn?.addEventListener('click', () => this.next());
-
-      this.dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => this.goTo(index));
-      });
-
-      // ---- Touch swipe ----
-      this.track.addEventListener('touchstart', (e) => {
-        this.startX = e.touches[0].clientX;
-      }, { passive: true });
-
-      this.track.addEventListener('touchend', (e) => {
-        const endX = e.changedTouches[0].clientX;
-        const diff = this.startX - endX;
-        if (Math.abs(diff) > 50) {
-          if (diff > 0) this.next();
-          else this.prev();
-        }
-      }, { passive: true });
-
-      // ---- Mouse drag ----
-      this.track.addEventListener('mousedown', e => {
-        this.isDragging = true;
-        this.startX = e.pageX - this.track.offsetLeft;
-        this.scrollStart = this.track.scrollLeft;
-        this.track.classList.add('dragging');
-      });
-
-      this.track.addEventListener('mouseleave', () => {
-        this.isDragging = false;
-        this.track.classList.remove('dragging');
-      });
-
-      this.track.addEventListener('mouseup', () => {
-        this.isDragging = false;
-        this.track.classList.remove('dragging');
-      });
-
-      this.track.addEventListener('mousemove', e => {
-        if (!this.isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - this.track.offsetLeft;
-        const walk = (x - this.startX) * 2; // скорость прокрутки
-        this.track.scrollLeft = this.scrollStart - walk;
-      });
-    }
-
-    prev() {
-      this.goTo((this.currentIndex - 1 + this.slides.length) % this.slides.length);
-    }
-
-    next() {
-      this.goTo((this.currentIndex + 1) % this.slides.length);
-    }
-
-    goTo(index) {
-      this.currentIndex = index;
-      const slideWidth = this.slides[0].offsetWidth;
-      this.track.style.transform = `translateX(-${index * slideWidth}px)`;
-
-      this.dots.forEach((dot, i) => {
-        dot.classList.toggle('active', i === index);
-      });
-
-      if (this.caption && this.captions[index]) {
-        this.caption.textContent = this.captions[index];
-      }
-    }
-  }
-
-  // --------------------
-  // Categories Accordion
-  // --------------------
+  // ==================== CATEGORIES ACCORDION ====================
   class CategoriesAccordion {
     constructor() {
       document.querySelectorAll('.category-header').forEach(header => {
         const group = header.closest('.category-group');
         if (group.id !== 'politika') group.classList.add('open');
-        header.addEventListener('click', () => group.classList.toggle('open'));
+
+        header.addEventListener('click', () => {
+          group.classList.toggle('open');
+        });
       });
     }
   }
 
-  // --------------------
-  // Initialize
-  // --------------------
+  // ==================== CAROUSEL (MOUSE + TOUCH) ====================
+  class Carousel {
+    constructor(container) {
+      this.container = container;
+      this.track = container.querySelector('.carousel-track');
+      this.slides = container.querySelectorAll('.carousel-slide');
+      this.prevBtn = container.querySelector('.carousel-prev');
+      this.nextBtn = container.querySelector('.carousel-next');
+
+      this.currentIndex = 0;
+
+      this.init();
+    }
+
+    init() {
+      // кнопки
+      this.prevBtn?.addEventListener('click', () => this.prev());
+      this.nextBtn?.addEventListener('click', () => this.next());
+
+      // ================== MOUSE DRAG ==================
+      let isDown = false;
+      let startX, scrollLeft;
+
+      this.track.addEventListener('mousedown', e => {
+        isDown = true;
+        this.container.classList.add('dragging');
+        startX = e.pageX - this.container.offsetLeft;
+        scrollLeft = this.track.scrollLeft;
+      });
+
+      this.track.addEventListener('mouseleave', () => {
+        isDown = false;
+        this.container.classList.remove('dragging');
+      });
+
+      this.track.addEventListener('mouseup', () => {
+        isDown = false;
+        this.container.classList.remove('dragging');
+      });
+
+      this.track.addEventListener('mousemove', e => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - this.container.offsetLeft;
+        const walk = (x - startX) * 2; // скорость прокрутки
+        this.track.scrollLeft = scrollLeft - walk;
+      });
+
+      // ================== TOUCH ==================
+      let touchStartX = 0;
+      this.track.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+
+      this.track.addEventListener('touchend', e => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 20) {
+          this.track.scrollBy({ left: diff, behavior: 'smooth' });
+        }
+      });
+    }
+
+    prev() {
+      this.track.scrollBy({ left: -this.track.clientWidth, behavior: 'smooth' });
+    }
+
+    next() {
+      this.track.scrollBy({ left: this.track.clientWidth, behavior: 'smooth' });
+    }
+  }
+
+  // ==================== INIT ====================
   document.addEventListener('DOMContentLoaded', () => {
     new MobileMenu();
     new Lightbox();
     new CategoriesAccordion();
 
-    // Применяем Carousel ко всем блокам .carousel-container и .favorites-carousel
-    document.querySelectorAll('.carousel-container, .favorites-carousel').forEach(el => {
-      new Carousel(el);
+    // Все карусели на странице
+    document.querySelectorAll('.carousel-container').forEach(container => {
+      new Carousel(container);
     });
   });
-
 })();
