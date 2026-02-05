@@ -24,7 +24,7 @@ title: Главная
     </div>
   </section>
 
-  <!-- Favorites Carousel (Популярные статьи) -->
+  <!-- Favorites Carousel / Популярные статьи -->
   {% assign favorites = site.posts | where: "favorites", true %}
   {% if favorites.size > 0 %}
   <section class="home-section">
@@ -33,7 +33,6 @@ title: Главная
     </header>
 
     <div class="favorites-carousel">
-      <!-- Навигационные стрелки -->
       <button class="carousel-prev" aria-label="Предыдущая статья">‹</button>
       <button class="carousel-next" aria-label="Следующая статья">›</button>
 
@@ -59,7 +58,7 @@ title: Главная
         </a>
         {% endfor %}
 
-        <!-- Вторая копия (для бесконечной анимации) -->
+        <!-- Вторая копия — обязательна для бесшовной бесконечной прокрутки -->
         {% for post in favorites limit: 10 %}
         <a href="{{ post.url | relative_url }}" class="favorite-card">
           {% if post.infobox.image %}
@@ -82,25 +81,23 @@ title: Главная
       </div>
     </div>
 
-    <!-- Встроенные стили для карусели -->
+    <!-- Стили карусели -->
     <style>
       .favorites-carousel {
         position: relative;
         overflow: hidden;
-        margin: var(--space-2xl, 3rem) 0;
-        padding: 0 var(--space-md, 1rem);
+        margin: 2.5rem 0;
+        padding: 0 1rem;
       }
 
       .favorites-track {
         display: flex;
-        gap: var(--space-lg, 1.5rem);
+        gap: 1.5rem;
         width: max-content;
         animation: infiniteScroll 80s linear infinite;
-        animation-play-state: running;
         will-change: transform;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior-x: contain;
       }
 
       @keyframes infiniteScroll {
@@ -121,7 +118,7 @@ title: Главная
         transform: translateY(-50%);
         width: 52px;
         height: 52px;
-        background: rgba(0,0,0,0.6);
+        background: rgba(0,0,0,0.55);
         color: white;
         font-size: 32px;
         font-weight: bold;
@@ -138,23 +135,22 @@ title: Главная
 
       .favorites-carousel:hover .carousel-prev,
       .favorites-carousel:hover .carousel-next {
-        opacity: 0.92;
+        opacity: 0.9;
       }
 
       .carousel-prev:hover,
       .carousel-next:hover {
-        background: rgba(0,0,0,0.9);
+        background: rgba(0,0,0,0.85);
         opacity: 1;
       }
 
       .carousel-prev { left: 16px; }
       .carousel-next { right: 16px; }
 
-      /* Мобильные устройства — стрелки всегда видны */
       @media (max-width: 768px) {
         .carousel-prev,
         .carousel-next {
-          opacity: 0.8;
+          opacity: 0.75;
           width: 44px;
           height: 44px;
           font-size: 26px;
@@ -163,19 +159,18 @@ title: Главная
         .carousel-next { right: 10px; }
       }
 
-      /* Дополнительные стили карточек (если не заданы глобально) */
       .favorite-card {
         flex: 0 0 300px;
         scroll-snap-align: start;
-        background: var(--color-surface, #ffffff);
-        border: 1px solid var(--color-border, #e0e0e0);
+        background: white;
+        border: 1px solid #e0e0e0;
         text-decoration: none;
-        color: var(--color-text, #1a1a1a);
-        transition: border-color 0.2s ease;
+        color: #1a1a1a;
+        transition: border-color 0.2s;
       }
 
       .favorite-card:hover {
-        border-color: var(--color-accent, #2d2d2d);
+        border-color: #2d2d2d;
       }
 
       .favorite-image {
@@ -187,7 +182,7 @@ title: Главная
   </section>
   {% endif %}
 
-  <!-- Latest Articles -->
+  <!-- Последние статьи -->
   <section class="home-section">
     <header class="section-header">
       <h2 class="section-title">Последние статьи</h2>
@@ -223,7 +218,7 @@ title: Главная
   </section>
 </div>
 
-<!-- Search Data for JavaScript -->
+<!-- Search Data -->
 <script type="application/json" id="search-data">
 [
   {% for post in site.posts %}
@@ -237,4 +232,30 @@ title: Главная
   }{% unless forloop.last %},{% endunless %}
   {% endfor %}
 ]
+</script>
+
+<!-- JavaScript для кликабельных стрелок -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const carousel = document.querySelector('.favorites-carousel');
+  if (!carousel) return;
+
+  const track = carousel.querySelector('.favorites-track');
+  const prev = carousel.querySelector('.carousel-prev');
+  const next = carousel.querySelector('.carousel-next');
+
+  if (!track || !prev || !next) return;
+
+  function scrollBy(amount) {
+    track.style.animationPlayState = 'paused';
+    track.scrollBy({ left: amount, behavior: 'smooth' });
+
+    setTimeout(() => {
+      track.style.animationPlayState = 'running';
+    }, 1400); // время чуть больше, чем длительность smooth
+  }
+
+  prev.addEventListener('click', () => scrollBy(-track.clientWidth));
+  next.addEventListener('click', () => scrollBy( track.clientWidth));
+});
 </script>
