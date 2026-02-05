@@ -1,29 +1,30 @@
 /**
  * Червепедия - Main JavaScript
- * Lightbox, Carousel, Categories, Mobile Menu
+ * Lightbox, Carousel (touch + mouse), Categories, Mobile Menu
  */
 
 (function() {
   'use strict';
 
+  // --------------------
   // Mobile Menu
+  // --------------------
   class MobileMenu {
     constructor() {
       this.toggle = document.getElementById('mobile-menu-toggle');
       this.nav = document.getElementById('mobile-nav');
-
       if (!this.toggle || !this.nav) return;
-
       this.toggle.addEventListener('click', () => this.toggleMenu());
     }
-
     toggleMenu() {
       this.nav.classList.toggle('active');
       this.toggle.classList.toggle('active');
     }
   }
 
+  // --------------------
   // Lightbox
+  // --------------------
   class Lightbox {
     constructor() {
       this.lightbox = document.getElementById('lightbox');
@@ -61,15 +62,9 @@
         if (!this.lightbox.classList.contains('active')) return;
 
         switch (e.key) {
-          case 'Escape':
-            this.close();
-            break;
-          case 'ArrowLeft':
-            this.prev();
-            break;
-          case 'ArrowRight':
-            this.next();
-            break;
+          case 'Escape': this.close(); break;
+          case 'ArrowLeft': this.prev(); break;
+          case 'ArrowRight': this.next(); break;
         }
       });
     }
@@ -110,7 +105,9 @@
     }
   }
 
-  // Carousel
+  // --------------------
+  // Carousel (touch + mouse drag)
+  // --------------------
   class Carousel {
     constructor(element) {
       this.container = element;
@@ -129,6 +126,10 @@
         this.captions.push(img?.alt || '');
       });
 
+      this.isDragging = false;
+      this.startX = 0;
+      this.scrollStart = 0;
+
       this.init();
     }
 
@@ -140,21 +141,45 @@
         dot.addEventListener('click', () => this.goTo(index));
       });
 
-      let startX = 0;
-      let endX = 0;
-
+      // ---- Touch swipe ----
       this.track.addEventListener('touchstart', (e) => {
-        startX = e.touches[0].clientX;
+        this.startX = e.touches[0].clientX;
       }, { passive: true });
 
       this.track.addEventListener('touchend', (e) => {
-        endX = e.changedTouches[0].clientX;
-        const diff = startX - endX;
+        const endX = e.changedTouches[0].clientX;
+        const diff = this.startX - endX;
         if (Math.abs(diff) > 50) {
           if (diff > 0) this.next();
           else this.prev();
         }
       }, { passive: true });
+
+      // ---- Mouse drag ----
+      this.track.addEventListener('mousedown', e => {
+        this.isDragging = true;
+        this.startX = e.pageX - this.track.offsetLeft;
+        this.scrollStart = this.track.scrollLeft;
+        this.track.classList.add('dragging');
+      });
+
+      this.track.addEventListener('mouseleave', () => {
+        this.isDragging = false;
+        this.track.classList.remove('dragging');
+      });
+
+      this.track.addEventListener('mouseup', () => {
+        this.isDragging = false;
+        this.track.classList.remove('dragging');
+      });
+
+      this.track.addEventListener('mousemove', e => {
+        if (!this.isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - this.track.offsetLeft;
+        const walk = (x - this.startX) * 2; // скорость прокрутки
+        this.track.scrollLeft = this.scrollStart - walk;
+      });
     }
 
     prev() {
@@ -167,7 +192,8 @@
 
     goTo(index) {
       this.currentIndex = index;
-      this.track.style.transform = `translateX(-${index * 100}%)`;
+      const slideWidth = this.slides[0].offsetWidth;
+      this.track.style.transform = `translateX(-${index * slideWidth}px)`;
 
       this.dots.forEach((dot, i) => {
         dot.classList.toggle('active', i === index);
@@ -179,32 +205,31 @@
     }
   }
 
+  // --------------------
   // Categories Accordion
+  // --------------------
   class CategoriesAccordion {
     constructor() {
       document.querySelectorAll('.category-header').forEach(header => {
         const group = header.closest('.category-group');
-
-        // По умолчанию открываем все, кроме политики
-        if (group.id !== 'politika') {
-          group.classList.add('open');
-        }
-
-        header.addEventListener('click', () => {
-          group.classList.toggle('open');
-        });
+        if (group.id !== 'politika') group.classList.add('open');
+        header.addEventListener('click', () => group.classList.toggle('open'));
       });
     }
   }
 
-  // Initialize everything
+  // --------------------
+  // Initialize
+  // --------------------
   document.addEventListener('DOMContentLoaded', () => {
     new MobileMenu();
     new Lightbox();
     new CategoriesAccordion();
 
-    document.querySelectorAll('.carousel-container').forEach(el => {
+    // Применяем Carousel ко всем блокам .carousel-container и .favorites-carousel
+    document.querySelectorAll('.carousel-container, .favorites-carousel').forEach(el => {
       new Carousel(el);
     });
   });
+
 })();
