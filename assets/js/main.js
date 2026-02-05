@@ -1,8 +1,8 @@
 /**
- * Червепедия — Main JavaScript
- * Mobile Menu, Lightbox, Categories Accordion, Favorites Carousel (auto slow infinite + drag + touch + buttons)
+ * Червепедия - Main JavaScript
+ * Mobile Menu, Lightbox, Categories, Carousel (mouse + touch)
  */
-(function () {
+(function() {
   'use strict';
 
   // ==================== MOBILE MENU ====================
@@ -57,10 +57,17 @@
 
       document.addEventListener('keydown', (e) => {
         if (!this.lightbox.classList.contains('active')) return;
+
         switch (e.key) {
-          case 'Escape': this.close(); break;
-          case 'ArrowLeft': this.prev(); break;
-          case 'ArrowRight': this.next(); break;
+          case 'Escape':
+            this.close();
+            break;
+          case 'ArrowLeft':
+            this.prev();
+            break;
+          case 'ArrowRight':
+            this.next();
+            break;
         }
       });
     }
@@ -92,7 +99,7 @@
       if (!img) return;
 
       this.image.src = img.src;
-      this.image.alt = img.alt || '';
+      this.image.alt = img.alt;
       this.caption.textContent = img.alt || '';
       this.currentSpan.textContent = this.currentIndex + 1;
       this.totalSpan.textContent = this.images.length;
@@ -108,7 +115,7 @@
     constructor() {
       document.querySelectorAll('.category-header').forEach(header => {
         const group = header.closest('.category-group');
-        if (group?.id !== 'politika') group.classList.add('open');
+        if (group.id !== 'politika') group.classList.add('open');
 
         header.addEventListener('click', () => {
           group.classList.toggle('open');
@@ -117,85 +124,86 @@
     }
   }
 
-  // ==================== FAVORITES CAROUSEL ====================
-  class FavoritesCarousel {
+  // ==================== CAROUSEL (MOUSE + TOUCH) ====================
+  class Carousel {
     constructor(container) {
       this.container = container;
-      this.track = container.querySelector('.favorites-track');
-      if (!this.track) return;
-
+      this.track = container.querySelector('.carousel-track');
+      this.slides = container.querySelectorAll('.carousel-slide');
       this.prevBtn = container.querySelector('.carousel-prev');
       this.nextBtn = container.querySelector('.carousel-next');
 
-      this.isDragging = false;
-      this.startX = 0;
-      this.scrollLeft = 0;
+      this.currentIndex = 0;
 
       this.init();
     }
 
     init() {
-      // Кнопки (смещение на ширину видимой области)
-      this.prevBtn?.addEventListener('click', () => this.scrollBy(-this.track.clientWidth));
-      this.nextBtn?.addEventListener('click', () => this.scrollBy(this.track.clientWidth));
+      // кнопки
+      this.prevBtn?.addEventListener('click', () => this.prev());
+      this.nextBtn?.addEventListener('click', () => this.next());
 
-      // Drag / swipe
-      this.track.addEventListener('mousedown',  e => this.startDragging(e));
-      this.track.addEventListener('touchstart', e => this.startDragging(e), { passive: false });
+      // ================== MOUSE DRAG ==================
+      let isDown = false;
+      let startX, scrollLeft;
 
-      document.addEventListener('mousemove', e => this.onMove(e));
-      document.addEventListener('mouseup',   () => this.stopDragging());
-      document.addEventListener('mouseleave', () => this.stopDragging());
+      this.track.addEventListener('mousedown', e => {
+        isDown = true;
+        this.container.classList.add('dragging');
+        startX = e.pageX - this.container.offsetLeft;
+        scrollLeft = this.track.scrollLeft;
+      });
 
-      document.addEventListener('touchmove', e => this.onMove(e), { passive: false });
-      document.addEventListener('touchend',   () => this.stopDragging());
-      document.addEventListener('touchcancel', () => this.stopDragging());
+      this.track.addEventListener('mouseleave', () => {
+        isDown = false;
+        this.container.classList.remove('dragging');
+      });
+
+      this.track.addEventListener('mouseup', () => {
+        isDown = false;
+        this.container.classList.remove('dragging');
+      });
+
+      this.track.addEventListener('mousemove', e => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - this.container.offsetLeft;
+        const walk = (x - startX) * 2; // скорость прокрутки
+        this.track.scrollLeft = scrollLeft - walk;
+      });
+
+      // ================== TOUCH ==================
+      let touchStartX = 0;
+      this.track.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+
+      this.track.addEventListener('touchend', e => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 20) {
+          this.track.scrollBy({ left: diff, behavior: 'smooth' });
+        }
+      });
     }
 
-    startDragging(e) {
-      this.isDragging = true;
-      this.container.classList.add('dragging');
-      this.track.style.animationPlayState = 'paused'; // останавливаем авто-анимацию
-
-      const clientX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
-      this.startX = clientX - this.track.getBoundingClientRect().left;
-      this.scrollLeft = this.track.scrollLeft;
-
-      e.preventDefault();
+    prev() {
+      this.track.scrollBy({ left: -this.track.clientWidth, behavior: 'smooth' });
     }
 
-    onMove(e) {
-      if (!this.isDragging) return;
-      e.preventDefault();
-
-      const clientX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
-      const x = clientX - this.track.getBoundingClientRect().left;
-      const walk = (x - this.startX) * 2.2;
-
-      this.track.scrollLeft = this.scrollLeft - walk;
-    }
-
-    stopDragging() {
-      if (!this.isDragging) return;
-      this.isDragging = false;
-      this.container.classList.remove('dragging');
-      this.track.style.animationPlayState = 'running'; // возобновляем авто-прокрутку
-    }
-
-    scrollBy(amount) {
-      this.track.scrollBy({ left: amount, behavior: 'smooth' });
+    next() {
+      this.track.scrollBy({ left: this.track.clientWidth, behavior: 'smooth' });
     }
   }
 
-  // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+  // ==================== INIT ====================
   document.addEventListener('DOMContentLoaded', () => {
     new MobileMenu();
     new Lightbox();
     new CategoriesAccordion();
 
-    const favorites = document.querySelector('.favorites-carousel');
-    if (favorites) {
-      new FavoritesCarousel(favorites);
-    }
+    // Все карусели на странице
+    document.querySelectorAll('.carousel-container').forEach(container => {
+      new Carousel(container);
+    });
   });
 })();
