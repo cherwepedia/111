@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Русофобия и русореализм"
-categories: [politika]
+categories: [политика]
 
 infobox:
   data:
