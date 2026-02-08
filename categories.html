@@ -63,6 +63,7 @@ ym(105469789, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLa
 
         <section id="{{ category.id }}" class="category-card">
 
+          <!-- Делаем категории скрываемыми как TOC -->
           {% if category.id == "politika" %}
             <details class="toc">
           {% else %}
