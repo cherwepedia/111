@@ -51,7 +51,7 @@ ym(105469789, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLa
 
   {%- comment -%}
   =====================
-  КАТЕГОРИИ В КАРТОЧКАХ
+  КАТЕГОРИИ
   =====================
   {%- endcomment -%}
 
@@ -63,28 +63,36 @@ ym(105469789, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLa
 
         <section id="{{ category.id }}" class="category-card">
 
-          <h2 class="category-title">
-            {{ category.name }}
-            <span class="category-count">
-              ({{ posts.size }})
-            </span>
-          </h2>
-
-          {% if category.description %}
-            <div class="category-description">
-              {{ category.description }}
-            </div>
+          {% if category.id == "politika" %}
+            <details class="toc">
+          {% else %}
+            <details class="toc" open>
           {% endif %}
 
-          <ul class="article-list">
-            {% for post in posts %}
-              <li>
-                <a href="{{ post.url | relative_url }}">
-                  {{ post.title }}
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
+            <summary class="toc-toggle">
+              {{ category.name }}
+              <span class="category-count">
+                ({{ posts.size }})
+              </span>
+            </summary>
+
+            {% if category.description %}
+              <div class="category-description">
+                {{ category.description }}
+              </div>
+            {% endif %}
+
+            <ul class="article-list">
+              {% for post in posts %}
+                <li>
+                  <a href="{{ post.url | relative_url }}">
+                    {{ post.title }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+
+          </details>
 
         </section>
 
