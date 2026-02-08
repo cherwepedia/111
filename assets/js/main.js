@@ -195,6 +195,24 @@
     }
   }
 
+  // ==================== RANDOM ARTICLE ====================
+  (function() {
+    const button = document.getElementById('random-article-btn');
+    if (!button) return;
+
+    // Берём реальные статьи со страницы
+    const posts = Array.from(document.querySelectorAll('.article-list li a'))
+                       .map(a => a.href)
+                       .filter(h => h);
+
+    if (!posts.length) return;
+
+    button.addEventListener('click', () => {
+      const randomIndex = Math.floor(Math.random() * posts.length);
+      window.location.href = posts[randomIndex];
+    });
+  })();
+
   // ==================== INIT ====================
   document.addEventListener('DOMContentLoaded', () => {
     new MobileMenu();
