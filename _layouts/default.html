@@ -13,44 +13,6 @@
 ym(105469789, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/105469789" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-
-<div class="homepage-content">
-  <div class="homepage-header">
-    <h1 class="site-title">Червепедия</h1>
-    <p class="site-description">Энциклопедия Черветреда. Тут ты узнаешь только правду.</p>
-  </div>
-
-  <div class="categories-section">
-    {% assign sorted_categories = site.categories | sort %}
-    {% for category in site.data.categories %}
-      <div class="category-block" id="category-{{ category.slug }}">
-        <div class="category-header" onclick="toggleCategory('{{ category.slug }}')">
-          <h2>{{ category.name }}</h2>
-          <span class="toggle-icon" id="icon-{{ category.slug }}">{% if category.slug == 'люди' %}▼{% else %}▶{% endif %}</span>
-        </div>
-        <div class="category-articles" id="articles-{{ category.slug }}" style="{% if category.slug != 'люди' %}display: none;{% endif %}">
-          {% assign category_posts = site.posts | where_exp: "post", "post.categories contains category.name" | sort: "title" %}
-          {% if category_posts.size > 0 %}
-            <ul class="article-list">
-              {% for post in category_posts %}
-                <li itemscope itemtype="https://schema.org/Article">
-                  <a href="{{ post.url | relative_url }}" itemprop="url">
-                    <span itemprop="headline">{{ post.title }}</span>
-                  </a>
-                  {% if post.image %}
-                    <meta itemprop="image" content="{{ post.image | absolute_url }}">
-                  {% endif %}
-                </li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            <p class="no-articles">Статей пока нет</p>
-          {% endif %}
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-</div>
   
 <head>
   <meta charset="UTF-8">
