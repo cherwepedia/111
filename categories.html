@@ -1,4 +1,3 @@
----
 layout: default
 title: Категории
 permalink: /categories/
@@ -39,7 +38,7 @@ ym(105469789, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLa
           {% assign posts = site.posts | where_exp: "p", "p.categories contains category.id" %}
           {% if posts.size > 0 %}
             <li>
-              <a href="{{ category.url }}">
+              <a href="#{{ category.id }}">
                 {{ category.name }}
               </a>
             </li>
@@ -61,14 +60,13 @@ ym(105469789, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLa
       {% assign posts = site.posts | where_exp: "p", "p.categories contains category.id" %}
       {% if posts.size > 0 %}
 
-        <section id="{{ category.id }}" class="category-card">
-
-          <h2 class="category-title">
+        <details id="{{ category.id }}" class="category-card" {% if category.id == "politika" %}{% else %}open{% endif %}>
+          <summary class="category-title">
             {{ category.name }}
             <span class="category-count">
               ({{ posts.size }})
             </span>
-          </h2>
+          </summary>
 
           {% if category.description %}
             <div class="category-description">
@@ -85,8 +83,7 @@ ym(105469789, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLa
               </li>
             {% endfor %}
           </ul>
-
-        </section>
+        </details>
 
       {% endif %}
     {% endfor %}
@@ -127,6 +124,7 @@ ym(105469789, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLa
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: var(--space-sm);
+  cursor: pointer;
 }
 
 .category-count {
