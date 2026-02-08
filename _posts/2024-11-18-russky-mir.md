@@ -1,8 +1,7 @@
 ---
 layout: post
 title: "Русский мир"
-categories: [politika]
-favorites: true
+categories: [политика]
 
 intro: >
   «**Русский мир**» — левацкая (в худшем, позднесоветском смысле) идеологическая
