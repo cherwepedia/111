@@ -139,7 +139,6 @@
     }
 
     init() {
-      // кнопки
       this.prevBtn?.addEventListener('click', () => this.prev());
       this.nextBtn?.addEventListener('click', () => this.next());
 
@@ -168,7 +167,7 @@
         if (!isDown) return;
         e.preventDefault();
         const x = e.pageX - this.container.offsetLeft;
-        const walk = (x - startX) * 2; // скорость прокрутки
+        const walk = (x - startX) * 2;
         this.track.scrollLeft = scrollLeft - walk;
       });
 
@@ -195,33 +194,48 @@
     }
   }
 
-  // ==================== RANDOM ARTICLE ====================
-  (function() {
-    const button = document.getElementById('random-article-btn');
-    if (!button) return;
+  // ==================== RANDOM ARTICLE GENERATOR ====================
+  class RandomArticle {
+    constructor(buttonId) {
+      this.button = document.getElementById(buttonId);
+      if (!this.button) return;
 
-    // Берём реальные статьи со страницы
-    const posts = Array.from(document.querySelectorAll('.article-list li a'))
-                       .map(a => a.href)
-                       .filter(h => h);
+      this.init();
+    }
 
-    if (!posts.length) return;
+    async init() {
+      const links = Array.from(document.querySelectorAll('.article-list li a'))
+                         .map(a => a.href);
 
-    button.addEventListener('click', () => {
-      const randomIndex = Math.floor(Math.random() * posts.length);
-      window.location.href = posts[randomIndex];
-    });
-  })();
+      // Проверяем существование ссылок
+      const posts = [];
+      const checks = links.map(href =>
+        fetch(href, { method: 'HEAD' })
+          .then(res => { if (res.ok) posts.push(href); })
+          .catch(() => {})
+      );
+
+      await Promise.all(checks);
+
+      if (!posts.length) return;
+
+      this.button.addEventListener('click', () => {
+        const randomIndex = Math.floor(Math.random() * posts.length);
+        window.location.href = posts[randomIndex];
+      });
+    }
+  }
 
   // ==================== INIT ====================
   document.addEventListener('DOMContentLoaded', () => {
     new MobileMenu();
     new Lightbox();
     new CategoriesAccordion();
+    new RandomArticle('random-article-btn');
 
-    // Все карусели на странице
     document.querySelectorAll('.carousel-container').forEach(container => {
       new Carousel(container);
     });
   });
+
 })();
