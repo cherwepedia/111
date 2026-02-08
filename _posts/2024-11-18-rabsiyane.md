@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Рабский менталитет"
-categories: [politika]
+categories: [Политика]
 
 infobox:
   data:
