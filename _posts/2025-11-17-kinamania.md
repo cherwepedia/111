@@ -3,7 +3,7 @@ layout: post
 title: "Kinamania Production"
 intro: >
   **Kinamania Production** — видеопроект Павла «Кинаман» Гринёва с 2011 года, включающий «Проклятие Серого Слонёнка», «Dendy Chronicles», «На Кухне» и другие рубрики. Команда включала Култхарда, Фроззу, Макса Едуша и других. К 2025 году активность минимальна: стримы и кухни выходят раз в полгода, а обещанные «пять фильмов» остаются мемом.
-categories: [projects]
+categories: [проекты]
 infobox:
   image: "https://i.ibb.co/BV2BJdB1/250px-Kinamaniaposter.jpg"
   data:
