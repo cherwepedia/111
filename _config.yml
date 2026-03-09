@@ -34,3 +34,4 @@ exclude:
 # Plugins (GitHub Pages compatible)
 plugins:
   - jekyll-seo-tag
+  - jekyll-sitemap
